@@ -74,7 +74,7 @@
 		"သူငယ်ချင်း": "Sa Yar Ga Toe Pwell/သူငယ်ချင်း.png"
 	};
 
-	const elements = {
+    const elements = {
 		list: document.getElementById("songList"),
 		image: document.getElementById("songImage"),
 		fallback: document.getElementById("imageFallback"),
@@ -95,14 +95,17 @@
 		fsToggle: document.getElementById("fsToggle"),
 		zoomInBtn: document.getElementById("zoomInBtn"),
 		zoomOutBtn: document.getElementById("zoomOutBtn"),
-		zoomResetBtn: document.getElementById("zoomResetBtn")
+        zoomResetBtn: document.getElementById("zoomResetBtn"),
+        colMusicList: document.getElementById("colMusicList"),
+        colSaYar: document.getElementById("colSaYar")
 	};
 
-	let currentIndex = 0; // 0-based
-	let filteredIndexes = getSongs().map((_, i) => i);
-	let favorites = loadJson('favorites', []);
-	let recent = loadJson('recent', []);
-	let activeTab = 'all';
+    let currentIndex = 0; // 0-based
+    let filteredIndexes = getSongs().map((_, i) => i);
+    let favoritesByCollection = loadJson('favoritesByCollection', {});
+    let recentByCollection = loadJson('recentByCollection', {});
+    let activeTab = loadJson('activeTab', 'all');
+    currentCollection = loadJson('lastCollection', currentCollection);
 	let zoomScale = 1;
 
 	function saveJson(key, value){
@@ -112,18 +115,49 @@
 		try{ const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }catch(_){ return fallback; }
 	}
 
+    function getFavorites(){
+        return favoritesByCollection[currentCollection] || [];
+    }
+    function setFavorites(arr){
+        favoritesByCollection[currentCollection] = arr;
+        saveJson('favoritesByCollection', favoritesByCollection);
+    }
+    function getRecent(){
+        return recentByCollection[currentCollection] || [];
+    }
+    function setRecent(arr){
+        recentByCollection[currentCollection] = arr;
+        saveJson('recentByCollection', recentByCollection);
+    }
+
 	function renderList(){
 		elements.list.innerHTML = "";
-		const songs = getSongs();
-		let sourceIndexes = filteredIndexes;
-		if(activeTab === 'fav') sourceIndexes = sourceIndexes.filter(i => favorites.includes(i));
-		if(activeTab === 'recent') sourceIndexes = sourceIndexes.filter(i => recent.includes(i));
-		sourceIndexes.forEach((songIndex) => {
+        const songs = getSongs();
+        let sourceIndexes = filteredIndexes;
+        const favorites = getFavorites();
+        const recent = getRecent();
+        if(activeTab === 'fav') sourceIndexes = sourceIndexes.filter(i => favorites.includes(i));
+        if(activeTab === 'recent') sourceIndexes = sourceIndexes.filter(i => recent.includes(i));
+        if(songs.length === 0){
+            const div = document.createElement('div');
+            div.className = 'empty-state';
+            div.textContent = 'No songs in this collection.';
+            elements.list.appendChild(div);
+            return;
+        }
+        if(sourceIndexes.length === 0){
+            const div = document.createElement('div');
+            div.className = 'empty-state';
+            div.textContent = 'No items match this view yet.';
+            elements.list.appendChild(div);
+            return;
+        }
+        sourceIndexes.forEach((songIndex) => {
 			const title = songs[songIndex];
 			const li = document.createElement("li");
 			li.className = "song-item" + (songIndex === currentIndex ? " active" : "");
 			li.setAttribute("data-index", String(songIndex));
-			const isFav = favorites.includes(songIndex);
+            const isFav = favorites.includes(songIndex);
 			li.innerHTML = `
 				<span class="song-index">${songIndex + 1}</span>
 				<span class="song-title" title="${escapeHtml(title)}">${escapeHtml(title)}</span>
@@ -160,7 +194,18 @@
 		elements.image.hidden = false;
 		elements.fallback.hidden = true;
 		elements.image.alt = title;
-		elements.image.src = src + `?v=${encodeURIComponent(src.length)}`; // cache-bust lightly
+        elements.image.src = src + `?v=${encodeURIComponent(src.length)}`; // cache-bust lightly
+        // Preload neighbors
+        try{
+            const songs = getSongs();
+            const nextIdx = Math.min(songs.length - 1, currentIndex + 1);
+            const prevIdx = Math.max(0, currentIndex - 1);
+            [nextIdx, prevIdx].forEach(i => {
+                const t = songs[i];
+                const p = filenameByTitle[t];
+                if(p){ const im = new Image(); im.src = p; }
+            });
+        }catch(_){ }
 		applyZoom(1, true);
 	}
 
@@ -176,8 +221,8 @@
 		renderList();
 		updateMeta();
 		loadImageForCurrent();
-		updateFavUi();
-		pushRecent(index);
+        updateFavUi();
+        pushRecent(index);
 		// On small screens, auto-close the list to reveal the image
 		if(window.innerWidth <= 900 && elements.listPanel.classList.contains("is-open")){
 			elements.listPanel.classList.remove("is-open");
@@ -204,8 +249,8 @@
 		const qRaw = elements.search.value || "";
 		const q = qRaw.toLowerCase();
 		const qDigits = q.replace(/[^0-9]/g, "");
-		const songs = getSongs();
-		filteredIndexes = songs
+        const songs = getSongs();
+        filteredIndexes = songs
 			.map((title, i) => ({ title, i }))
 			.filter(x => {
 				const matchesTitle = x.title.toLowerCase().includes(q);
@@ -236,15 +281,30 @@
 
 		// No landing logic; standalone mainmenu.html is used now
 		elements.search.addEventListener("input", applySearchFilter);
-		// URL params to preset tab/open list/focus search
+        // URL params to preset collection/tab/open list/focus search and song select
 		try{
 			const params = new URLSearchParams(location.search);
+            const col = params.get('collection');
+            if(col && (collections[col])) setCollection(col);
 			const view = params.get('view');
 			if(view === 'fav') setTab('fav');
 			if(view === 'recent') setTab('recent');
 			if(params.get('openList') === '1'){ elements.listPanel.classList.add('is-open'); elements.toggleList.setAttribute('aria-expanded','true'); setTimeout(()=>elements.search.focus(),50); }
-			const presetSearch = params.get('search');
-			if(presetSearch){ elements.search.value = ''; setTimeout(()=>{ elements.search.value=''; elements.search.focus(); }, 50); }
+            const presetSearch = params.get('search');
+            if(presetSearch){ elements.search.value = ''; setTimeout(()=>{ elements.search.value=''; elements.search.focus(); }, 50); }
+            const songParam = params.get('song');
+            if(songParam){
+                const songs = getSongs();
+                let idx = -1;
+                if(/^[0-9]+$/.test(songParam)){
+                    idx = Math.max(0, Math.min(songs.length-1, parseInt(songParam,10)-1));
+                }else{
+                    const lower = songParam.toLowerCase();
+                    idx = songs.findIndex(t => t.toLowerCase() === lower);
+                    if(idx === -1) idx = songs.findIndex(t => t.toLowerCase().includes(lower));
+                }
+                if(idx >= 0) selectIndex(idx);
+            }
 		}catch(_){ }
 		// Toggle list for mobile
 		elements.toggleList.addEventListener("click", function(){
@@ -262,7 +322,7 @@
 		// Collection tabs
 		elements.colMusicList.addEventListener('click', () => setCollection('Music Club Song List'));
 		elements.colSaYar.addEventListener('click', () => setCollection('Sa Yar Ga Toe Pwell'));
-		// Favorites toggle
+        // Favorites toggle
 		elements.favToggle.addEventListener('click', toggleFavorite);
 		// Fullscreen toggle
 		elements.fsToggle.addEventListener('click', toggleFullscreen);
@@ -270,9 +330,6 @@
 		elements.zoomInBtn.addEventListener('click', () => applyZoom(zoomScale * 1.2));
 		elements.zoomOutBtn.addEventListener('click', () => applyZoom(zoomScale / 1.2));
 		elements.zoomResetBtn.addEventListener('click', () => applyZoom(1, true));
-		// Quick switch to Music Club Song List from bottom bar
-		const openMusicListBtn = document.getElementById('openMusicListBtn');
-		if(openMusicListBtn){ openMusicListBtn.addEventListener('click', () => setCollection('Music Club Song List')); }
 
 	// Touch swipe navigation
 	let touchStartX = null;
@@ -329,25 +386,27 @@
 		elements.image.style.transformOrigin = 'center center';
 	}
 
-	function toggleFavorite(){
-		const idx = currentIndex;
-		const pos = favorites.indexOf(idx);
-		if(pos === -1) favorites.push(idx); else favorites.splice(pos,1);
-		saveJson('favorites', favorites);
-		updateFavUi();
-		renderList();
-	}
+    function toggleFavorite(){
+        const idx = currentIndex;
+        const favorites = getFavorites();
+        const pos = favorites.indexOf(idx);
+        if(pos === -1) favorites.push(idx); else favorites.splice(pos,1);
+        setFavorites(favorites);
+        updateFavUi();
+        renderList();
+    }
 	function updateFavUi(){
-		const isFav = favorites.includes(currentIndex);
+        const isFav = getFavorites().includes(currentIndex);
 		elements.favToggle.textContent = isFav ? '❤' : '♡';
 	}
 	function pushRecent(idx){
-		recent = [idx, ...recent.filter(i => i !== idx)].slice(0, 10);
-		saveJson('recent', recent);
+        const recent = [idx, ...getRecent().filter(i => i !== idx)].slice(0, 10);
+        setRecent(recent);
 	}
 
 	function setTab(tab){
 		activeTab = tab;
+        saveJson('activeTab', activeTab);
 		[elements.tabAll, elements.tabFav, elements.tabRecent].forEach(btn => btn.classList.remove('is-active'));
 		if(tab === 'all') elements.tabAll.classList.add('is-active');
 		if(tab === 'fav') elements.tabFav.classList.add('is-active');
@@ -357,6 +416,7 @@
 
 	function setCollection(name){
 		currentCollection = name;
+        saveJson('lastCollection', currentCollection);
 		[elements.colMusicList, elements.colSaYar].forEach(btn => btn.classList.remove('is-active'));
 		if(name === 'Music Club Song List') elements.colMusicList.classList.add('is-active');
 		if(name === 'Sa Yar Ga Toe Pwell') elements.colSaYar.classList.add('is-active');

@@ -83,6 +83,7 @@ body{
     color:var(--text);
 }
 .song-list{list-style:decimal inside;margin:0;padding:8px;overflow:auto}
+.empty-state{padding:16px;color:var(--muted)}
 .song-item{padding:8px 10px;border-radius:8px;cursor:pointer;display:flex;gap:8px;align-items:center}
 .song-item:hover{background:#1a2030}
 .song-item.active{background:#22314f}
