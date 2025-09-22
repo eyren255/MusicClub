@@ -22,7 +22,7 @@ body{
 }
 
 .app{display:flex;flex-direction:column;min-height:100vh}
-.landing{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.7);backdrop-filter:saturate(120%) blur(6px);z-index:1000}
+.landing{display:flex;align-items:center;justify-content:center;padding:40px 16px}
 .landing__card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:24px 20px;max-width:420px;text-align:center;color:var(--text);box-shadow:0 10px 30px rgba(0,0,0,.35)}
 .landing__logo{width:96px;height:96px;border-radius:50%;border:1px solid var(--border);background:#0b0e13;object-fit:cover;margin-bottom:12px}
 .landing__title{margin:8px 0 6px 0}

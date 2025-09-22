@@ -224,13 +224,15 @@
 			elements.image.hidden = false;
 		});
 
-		// Landing overlay
+        // Landing page toggle
 		try{
 			const seen = localStorage.getItem('landingSeen');
-			if(!seen){ elements.landing.hidden = false; }
+            const appShell = document.getElementById('appShell');
+            if(!seen){ elements.landing.hidden = false; appShell.hidden = true; }
 			elements.enterBtn.addEventListener('click', () => {
 				localStorage.setItem('landingSeen','1');
-				elements.landing.hidden = true;
+                elements.landing.hidden = true;
+                appShell.hidden = false;
 			});
 		}catch(_){ /* ignore */ }
 		elements.search.addEventListener("input", applySearchFilter);
