@@ -144,7 +144,7 @@ body{
     .sidebar.is-open{display:flex}
     /* Place viewer controls below the image, not on top of it */
     .viewer__image-wrap{display:flex;flex-direction:column;align-items:center}
-    .viewer__controls{justify-content:center;gap:10px;padding-bottom:calc(12px + env(safe-area-inset-bottom, 0px))}
+    .viewer__controls{display:none}
     .viewer__controls .btn{padding:12px 14px}
     /* Hide fullscreen button on mobile */
     #fsToggle{display:none}
