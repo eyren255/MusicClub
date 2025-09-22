@@ -143,9 +143,7 @@ body{
     display:block;
 }
 .viewer__image-wrap{position:relative}
-.viewer__controls{display:flex;gap:10px;justify-content:center;padding:10px 16px;background:var(--panel);border-top:1px solid var(--border);position:sticky;bottom:0;z-index:2}
-.viewer__controls .btn{padding:10px 12px}
-.viewer__controls .btn--ghost{background:var(--primary);border-color:var(--primary);color:#fff}
+.viewer__controls{display:none}
 .viewer__image-wrap.zoomed img{cursor:grab}
 .viewer__image-wrap img{will-change:transform}
 

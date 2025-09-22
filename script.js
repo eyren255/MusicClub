@@ -331,10 +331,7 @@
 		elements.colSaYar.addEventListener('click', () => setCollection('Sa Yar Ga Toe Pwell'));
         // Favorites toggle
 		elements.favToggle.addEventListener('click', toggleFavorite);
-        // Disable fullscreen on mobile and remove zoom buttons entirely
-        if(window.innerWidth > 900){
-            elements.fsToggle.addEventListener('click', toggleFullscreen);
-        }
+        // Remove zoom/fullscreen logic per request (keep favorite only)
 
 	// Touch swipe navigation
 	let touchStartX = null;
@@ -359,39 +356,9 @@
 	const viewer = document.querySelector(".viewer__image-wrap");
 	viewer.addEventListener("touchstart", onTouchStart, {passive:true});
 	viewer.addEventListener("touchend", onTouchEnd, {passive:true});
-	// Double-tap zoom
-	let lastTap = 0;
-	viewer.addEventListener('touchend', function(){
-		const now = Date.now();
-		if(now - lastTap < 300){ applyZoom(zoomScale > 1 ? 1 : 2); }
-		lastTap = now;
-	}, {passive:true});
-    // Pinch zoom
-	let pinchStartDist = null;
-	viewer.addEventListener('touchmove', function(e){
-		if(e.touches && e.touches.length === 2){
-			const dx = e.touches[0].clientX - e.touches[1].clientX;
-			const dy = e.touches[0].clientY - e.touches[1].clientY;
-			const dist = Math.hypot(dx, dy);
-			if(pinchStartDist == null){
-				pinchStartDist = dist;
-			}else{
-				const factor = dist / pinchStartDist;
-                applyZoom(Math.max(1, Math.min(4, zoomScale * factor)));
-				pinchStartDist = dist;
-			}
-		}else{
-			pinchStartDist = null;
-		}
-	}, {passive:true});
+    // Remove mobile zoom gestures
 
-	function applyZoom(scale, reset){
-		zoomScale = reset ? 1 : Math.max(1, Math.min(4, scale));
-		elements.image.style.transform = `scale(${zoomScale})`;
-		elements.image.style.transformOrigin = 'center center';
-		const wrap = document.querySelector('.viewer__image-wrap');
-		if(zoomScale > 1){ wrap.classList.add('zoomed'); } else { wrap.classList.remove('zoomed'); }
-	}
+function applyZoom(){ /* disabled */ }
 
     function toggleFavorite(){
         const idx = currentIndex;
@@ -436,17 +403,7 @@
 
     // Settings drawer removed
 
-	function toggleFullscreen(){
-		const root = document.querySelector('.app');
-		const el = document.documentElement;
-		if(!document.fullscreenElement){
-			if(el.requestFullscreen){ el.requestFullscreen().catch(()=>{ root.classList.add('fullscreen-like'); }); }
-			else { root.classList.add('fullscreen-like'); }
-		}else{
-			if(document.exitFullscreen){ document.exitFullscreen().catch(()=>{ root.classList.remove('fullscreen-like'); }); }
-			root.classList.remove('fullscreen-like');
-		}
-	}
+function toggleFullscreen(){ /* disabled */ }
 
 	// Initial render
 		renderList();
