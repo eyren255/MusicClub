@@ -178,6 +178,11 @@
 		elements.next.addEventListener("click", selectNext);
 		document.addEventListener("keydown", handleKeyboard);
 		elements.image.addEventListener("error", showFallback);
+		elements.image.addEventListener("load", function(){
+			// Ensure fallback is hidden when image loads successfully
+			elements.fallback.hidden = true;
+			elements.image.hidden = false;
+		});
 		elements.search.addEventListener("input", applySearchFilter);
 
 	// Initial render

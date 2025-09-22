@@ -1,11 +1,12 @@
 :root{
-    --bg:#0f1115;
-    --panel:#161a22;
-    --muted:#8b93a7;
-    --text:#e7ecf3;
-    --primary:#4f7cff;
-    --primary-600:#3e68e6;
-    --border:#232936;
+    /* Theme updated to match green logo */
+    --bg:#0e1510;
+    --panel:#142017;
+    --muted:#a3b5a6;
+    --text:#ecf5ee;
+    --primary:#3aa856; /* green */
+    --primary-600:#2f8b47;
+    --border:#1e2a21;
 }
 
 *{box-sizing:border-box}
@@ -77,7 +78,7 @@ body{
     max-height:70vh;
     border-radius:12px;
     border:1px solid var(--border);
-    background:#0b0e13;
+    background:#101812;
 }
 .viewer__fallback{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted)}
 .fallback__emoji{font-size:48px}
