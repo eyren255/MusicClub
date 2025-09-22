@@ -38,6 +38,14 @@ body{
 .home__hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;margin:16px 0 20px 0}
 .home__logo{width:120px;height:120px;border-radius:60px;border:1px solid var(--border);background:#0b0e13;object-fit:cover}
 .home__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.home__eq{display:flex;gap:4px;margin-top:10px;height:16px}
+.home__eq span{display:block;width:6px;background:var(--primary);border-radius:3px;animation:bar 1s ease-in-out infinite}
+.home__eq span:nth-child(1){animation-delay:0s}
+.home__eq span:nth-child(2){animation-delay:.1s}
+.home__eq span:nth-child(3){animation-delay:.2s}
+.home__eq span:nth-child(4){animation-delay:.3s}
+.home__eq span:nth-child(5){animation-delay:.4s}
+@keyframes bar{0%{height:6px;opacity:.7}50%{height:16px;opacity:1}100%{height:6px;opacity:.7}}
 .card{display:block;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--panel);text-decoration:none;color:var(--text);transition:transform .12s ease, background .12s ease;animation:slideUp .25s ease}
 .card:hover{transform:translateY(-2px);background:#15261a}
 .card__icon{font-size:28px;margin-bottom:8px}
