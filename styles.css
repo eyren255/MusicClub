@@ -103,10 +103,10 @@ body{
     background:#101812;
     display:block;
 }
-.viewer__tools{position:absolute;display:flex;gap:8px;right:16px;bottom:16px;z-index:3;background:var(--panel);border:1px solid var(--border);padding:6px 8px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.35)}
 .viewer__image-wrap{position:relative}
-.viewer__tools .btn{padding:8px 10px}
-.viewer__tools .btn--ghost{background:var(--primary);border-color:var(--primary);color:#fff}
+.viewer__controls{display:flex;gap:10px;justify-content:center;padding:10px 16px}
+.viewer__controls .btn{padding:10px 12px}
+.viewer__controls .btn--ghost{background:var(--primary);border-color:var(--primary);color:#fff}
 .song-item .badge{margin-left:6px;font-size:12px;opacity:.8}
 .viewer__fallback{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted)}
 .fallback__emoji{font-size:48px}
@@ -132,10 +132,10 @@ body{
 @media (max-width: 900px){
     .sidebar{display:none}
     .sidebar.is-open{display:flex}
-    /* Place viewer tools below the image, not on top of it */
+    /* Place viewer controls below the image, not on top of it */
     .viewer__image-wrap{display:flex;flex-direction:column;align-items:center}
-    .viewer__tools{position:static;left:auto;right:auto;bottom:auto;transform:none;justify-content:center;gap:10px;margin-top:8px}
-    .viewer__tools .btn{padding:10px 14px}
+    .viewer__controls{justify-content:center;gap:10px}
+    .viewer__controls .btn{padding:12px 14px}
     .app__footer{padding-bottom:calc(10px + env(safe-area-inset-bottom, 0px))}
 }
 
