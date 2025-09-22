@@ -324,15 +324,10 @@
 		elements.colSaYar.addEventListener('click', () => setCollection('Sa Yar Ga Toe Pwell'));
         // Favorites toggle
 		elements.favToggle.addEventListener('click', toggleFavorite);
-		// Fullscreen toggle
-    // Disable fullscreen toggle on small screens
-    if(window.innerWidth > 900){
-        elements.fsToggle.addEventListener('click', toggleFullscreen);
-    }
-		// Zoom controls
-		elements.zoomInBtn.addEventListener('click', () => applyZoom(zoomScale * 1.2));
-		elements.zoomOutBtn.addEventListener('click', () => applyZoom(zoomScale / 1.2));
-		elements.zoomResetBtn.addEventListener('click', () => applyZoom(1, true));
+        // Disable fullscreen on mobile and remove zoom buttons entirely
+        if(window.innerWidth > 900){
+            elements.fsToggle.addEventListener('click', toggleFullscreen);
+        }
 
 	// Touch swipe navigation
 	let touchStartX = null;
