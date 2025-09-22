@@ -22,6 +22,12 @@ body{
 }
 
 .app{display:flex;flex-direction:column;min-height:100vh}
+.landing{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.7);backdrop-filter:saturate(120%) blur(6px);z-index:1000}
+.landing__card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:24px 20px;max-width:420px;text-align:center;color:var(--text);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.landing__logo{width:96px;height:96px;border-radius:50%;border:1px solid var(--border);background:#0b0e13;object-fit:cover;margin-bottom:12px}
+.landing__title{margin:8px 0 6px 0}
+.landing__subtitle{margin:0 0 16px 0;color:var(--muted)}
+.landing__enter{width:100%}
 .app__header{
     display:flex;align-items:center;justify-content:space-between;
     gap:12px;
@@ -69,6 +75,9 @@ body{
 .song-item.active{background:#22314f}
 .song-index{opacity:.7;width:28px;flex:0 0 auto;text-align:right}
 .song-title{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sidebar__tabs{display:flex;gap:8px;padding:8px;border-bottom:1px solid var(--border);position:sticky;top:58px;background:var(--panel);z-index:1}
+.tab{padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer}
+.tab.is-active{background:var(--primary);border-color:var(--primary);color:#fff}
 
 .viewer{display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden}
 .viewer__image-wrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;padding:12px;overflow:hidden}
@@ -81,6 +90,10 @@ body{
     background:#101812;
     display:block;
 }
+.viewer__tools{position:absolute;display:flex;gap:8px;right:16px;bottom:16px}
+.viewer__image-wrap{position:relative}
+.viewer__tools .btn{padding:8px 10px}
+.song-item .badge{margin-left:6px;font-size:12px;opacity:.8}
 .viewer__fallback{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted)}
 .fallback__emoji{font-size:48px}
 .viewer__meta{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 16px;border-top:1px solid var(--border);color:var(--muted)}

@@ -79,22 +79,49 @@
 		next: document.getElementById("nextBtn"),
 		search: document.getElementById("searchInput"),
 		listPanel: document.getElementById("songListPanel"),
-		toggleList: document.getElementById("toggleListBtn")
+		toggleList: document.getElementById("toggleListBtn"),
+		landing: document.getElementById("landing"),
+		enterBtn: document.getElementById("enterBtn"),
+		// Favorites/Recent & tools
+		tabAll: document.getElementById("tabAll"),
+		tabFav: document.getElementById("tabFav"),
+		tabRecent: document.getElementById("tabRecent"),
+		favToggle: document.getElementById("favToggle"),
+		fsToggle: document.getElementById("fsToggle"),
+		zoomInBtn: document.getElementById("zoomInBtn"),
+		zoomOutBtn: document.getElementById("zoomOutBtn"),
+		zoomResetBtn: document.getElementById("zoomResetBtn")
 	};
 
 	let currentIndex = 0; // 0-based
 	let filteredIndexes = songs.map((_, i) => i);
+	let favorites = loadJson('favorites', []);
+	let recent = loadJson('recent', []);
+	let activeTab = 'all';
+	let zoomScale = 1;
+
+	function saveJson(key, value){
+		try{ localStorage.setItem(key, JSON.stringify(value)); }catch(_){}
+	}
+	function loadJson(key, fallback){
+		try{ const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }catch(_){ return fallback; }
+	}
 
 	function renderList(){
 		elements.list.innerHTML = "";
-		filteredIndexes.forEach((songIndex, visibleIndex) => {
+		let sourceIndexes = filteredIndexes;
+		if(activeTab === 'fav') sourceIndexes = sourceIndexes.filter(i => favorites.includes(i));
+		if(activeTab === 'recent') sourceIndexes = sourceIndexes.filter(i => recent.includes(i));
+		sourceIndexes.forEach((songIndex) => {
 			const title = songs[songIndex];
 			const li = document.createElement("li");
 			li.className = "song-item" + (songIndex === currentIndex ? " active" : "");
 			li.setAttribute("data-index", String(songIndex));
+			const isFav = favorites.includes(songIndex);
 			li.innerHTML = `
 				<span class="song-index">${songIndex + 1}</span>
 				<span class="song-title" title="${escapeHtml(title)}">${escapeHtml(title)}</span>
+				${isFav ? '<span class="badge">❤</span>' : ''}
 			`;
 			li.addEventListener("click", () => selectIndex(songIndex));
 			elements.list.appendChild(li);
@@ -126,6 +153,7 @@
 		elements.fallback.hidden = true;
 		elements.image.alt = title;
 		elements.image.src = src + `?v=${encodeURIComponent(src.length)}`; // cache-bust lightly
+		applyZoom(1, true);
 	}
 
 	function showFallback(){
@@ -139,6 +167,8 @@
 		renderList();
 		updateMeta();
 		loadImageForCurrent();
+		updateFavUi();
+		pushRecent(index);
 		// On small screens, auto-close the list to reveal the image
 		if(window.innerWidth <= 900 && elements.listPanel.classList.contains("is-open")){
 			elements.listPanel.classList.remove("is-open");
@@ -193,6 +223,16 @@
 			elements.fallback.hidden = true;
 			elements.image.hidden = false;
 		});
+
+		// Landing overlay
+		try{
+			const seen = localStorage.getItem('landingSeen');
+			if(!seen){ elements.landing.hidden = false; }
+			elements.enterBtn.addEventListener('click', () => {
+				localStorage.setItem('landingSeen','1');
+				elements.landing.hidden = true;
+			});
+		}catch(_){ /* ignore */ }
 		elements.search.addEventListener("input", applySearchFilter);
 		// Toggle list for mobile
 		elements.toggleList.addEventListener("click", function(){
@@ -203,6 +243,18 @@
 				setTimeout(() => elements.search.focus(), 50);
 			}
 		});
+		// Tabs
+		elements.tabAll.addEventListener('click', () => setTab('all'));
+		elements.tabFav.addEventListener('click', () => setTab('fav'));
+		elements.tabRecent.addEventListener('click', () => setTab('recent'));
+		// Favorites toggle
+		elements.favToggle.addEventListener('click', toggleFavorite);
+		// Fullscreen toggle
+		elements.fsToggle.addEventListener('click', toggleFullscreen);
+		// Zoom controls
+		elements.zoomInBtn.addEventListener('click', () => applyZoom(zoomScale * 1.2));
+		elements.zoomOutBtn.addEventListener('click', () => applyZoom(zoomScale / 1.2));
+		elements.zoomResetBtn.addEventListener('click', () => applyZoom(1, true));
 
 	// Touch swipe navigation
 	let touchStartX = null;
@@ -227,10 +279,77 @@
 	const viewer = document.querySelector(".viewer__image-wrap");
 	viewer.addEventListener("touchstart", onTouchStart, {passive:true});
 	viewer.addEventListener("touchend", onTouchEnd, {passive:true});
+	// Double-tap zoom
+	let lastTap = 0;
+	viewer.addEventListener('touchend', function(){
+		const now = Date.now();
+		if(now - lastTap < 300){ applyZoom(zoomScale > 1 ? 1 : 2); }
+		lastTap = now;
+	}, {passive:true});
+	// Pinch zoom
+	let pinchStartDist = null;
+	viewer.addEventListener('touchmove', function(e){
+		if(e.touches && e.touches.length === 2){
+			const dx = e.touches[0].clientX - e.touches[1].clientX;
+			const dy = e.touches[0].clientY - e.touches[1].clientY;
+			const dist = Math.hypot(dx, dy);
+			if(pinchStartDist == null){
+				pinchStartDist = dist;
+			}else{
+				const factor = dist / pinchStartDist;
+				applyZoom(Math.max(0.5, Math.min(4, zoomScale * factor)));
+				pinchStartDist = dist;
+			}
+		}else{
+			pinchStartDist = null;
+		}
+	}, {passive:true});
+
+	function applyZoom(scale, reset){
+		zoomScale = reset ? 1 : Math.max(0.5, Math.min(4, scale));
+		elements.image.style.transform = `scale(${zoomScale})`;
+		elements.image.style.transformOrigin = 'center center';
+	}
+
+	function toggleFavorite(){
+		const idx = currentIndex;
+		const pos = favorites.indexOf(idx);
+		if(pos === -1) favorites.push(idx); else favorites.splice(pos,1);
+		saveJson('favorites', favorites);
+		updateFavUi();
+		renderList();
+	}
+	function updateFavUi(){
+		const isFav = favorites.includes(currentIndex);
+		elements.favToggle.textContent = isFav ? '❤' : '♡';
+	}
+	function pushRecent(idx){
+		recent = [idx, ...recent.filter(i => i !== idx)].slice(0, 10);
+		saveJson('recent', recent);
+	}
+
+	function setTab(tab){
+		activeTab = tab;
+		[elements.tabAll, elements.tabFav, elements.tabRecent].forEach(btn => btn.classList.remove('is-active'));
+		if(tab === 'all') elements.tabAll.classList.add('is-active');
+		if(tab === 'fav') elements.tabFav.classList.add('is-active');
+		if(tab === 'recent') elements.tabRecent.classList.add('is-active');
+		renderList();
+	}
+
+	function toggleFullscreen(){
+		const el = document.documentElement;
+		if(!document.fullscreenElement){
+			if(el.requestFullscreen) el.requestFullscreen();
+		}else{
+			if(document.exitFullscreen) document.exitFullscreen();
+		}
+	}
 
 	// Initial render
 		renderList();
 		selectIndex(0);
+		updateFavUi();
 
 })();
 

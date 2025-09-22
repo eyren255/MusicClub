@@ -11,6 +11,14 @@
 </head>
 <body>
     <div class="app">
+        <div id="landing" class="landing" hidden>
+            <div class="landing__card">
+                <img src="MusicClubLogo.PNG" alt="Music Club Logo" class="landing__logo" />
+                <h2 class="landing__title">Welcome to Music Club</h2>
+                <p class="landing__subtitle">Explore songs, mark favorites, and enjoy fullscreen viewing.</p>
+                <button id="enterBtn" class="btn landing__enter">Enter</button>
+            </div>
+        </div>
         <header class="app__header">
             <div class="brand">
                 <img class="brand__logo" src="MusicClubLogo.PNG" alt="Music Club Logo" />
@@ -28,12 +36,24 @@
                 <div class="sidebar__search">
                     <input id="searchInput" type="search" placeholder="Search songs or number…" aria-label="Search songs or number">
                 </div>
+                <div class="sidebar__tabs" role="tablist">
+                    <button id="tabAll" class="tab is-active" role="tab" aria-selected="true">All</button>
+                    <button id="tabFav" class="tab" role="tab" aria-selected="false">Favorites</button>
+                    <button id="tabRecent" class="tab" role="tab" aria-selected="false">Recent</button>
+                </div>
                 <ol id="songList" class="song-list" start="1"></ol>
             </aside>
 
             <section class="viewer" aria-live="polite">
                 <div class="viewer__image-wrap">
                     <img id="songImage" alt="Selected song cover" />
+                    <div class="viewer__tools">
+                        <button id="favToggle" class="btn btn--ghost" title="Favorite">❤</button>
+                        <button id="zoomInBtn" class="btn btn--ghost" title="Zoom in">＋</button>
+                        <button id="zoomOutBtn" class="btn btn--ghost" title="Zoom out">－</button>
+                        <button id="zoomResetBtn" class="btn btn--ghost" title="Reset zoom">⟲</button>
+                        <button id="fsToggle" class="btn" title="Fullscreen">⛶</button>
+                    </div>
                     <div id="imageFallback" class="viewer__fallback" hidden>
                         <div class="fallback__emoji">🎵</div>
                         <div class="fallback__text">No image available</div>
