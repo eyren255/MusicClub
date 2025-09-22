@@ -270,6 +270,9 @@
 		elements.zoomInBtn.addEventListener('click', () => applyZoom(zoomScale * 1.2));
 		elements.zoomOutBtn.addEventListener('click', () => applyZoom(zoomScale / 1.2));
 		elements.zoomResetBtn.addEventListener('click', () => applyZoom(1, true));
+		// Quick switch to Music Club Song List from bottom bar
+		const openMusicListBtn = document.getElementById('openMusicListBtn');
+		if(openMusicListBtn){ openMusicListBtn.addEventListener('click', () => setCollection('Music Club Song List')); }
 
 	// Touch swipe navigation
 	let touchStartX = null;
