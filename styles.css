@@ -28,6 +28,14 @@ body{
 .landing__title{margin:8px 0 6px 0}
 .landing__subtitle{margin:0 0 16px 0;color:var(--muted)}
 .landing__enter{width:100%}
+.features{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0 16px 0}
+.feature{display:flex;gap:10px;align-items:flex-start;background:#0f1a12;border:1px solid var(--border);padding:10px;border-radius:10px}
+.feature__icon{font-size:20px;line-height:1.2}
+.muted{color:var(--muted)}
+
+@media (max-width: 600px){
+    .features{grid-template-columns:1fr}
+}
 .app__header{
     display:flex;align-items:center;justify-content:space-between;
     gap:12px;
