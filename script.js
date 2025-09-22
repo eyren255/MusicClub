@@ -226,6 +226,16 @@
 
 		// No landing logic; standalone mainmenu.html is used now
 		elements.search.addEventListener("input", applySearchFilter);
+		// URL params to preset tab/open list/focus search
+		try{
+			const params = new URLSearchParams(location.search);
+			const view = params.get('view');
+			if(view === 'fav') setTab('fav');
+			if(view === 'recent') setTab('recent');
+			if(params.get('openList') === '1'){ elements.listPanel.classList.add('is-open'); elements.toggleList.setAttribute('aria-expanded','true'); setTimeout(()=>elements.search.focus(),50); }
+			const presetSearch = params.get('search');
+			if(presetSearch){ elements.search.value = ''; setTimeout(()=>{ elements.search.value=''; elements.search.focus(); }, 50); }
+		}catch(_){ }
 		// Toggle list for mobile
 		elements.toggleList.addEventListener("click", function(){
 			const isOpen = elements.listPanel.classList.toggle("is-open");
