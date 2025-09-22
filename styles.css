@@ -115,6 +115,10 @@ body{
 @media (max-width: 900px){
     .sidebar{display:none}
     .sidebar.is-open{display:flex}
+    /* Move viewer tools to bottom center on mobile */
+    .viewer__tools{left:0;right:0;bottom:8px;justify-content:center;gap:10px}
+    .viewer__tools .btn{padding:10px 14px}
+    .app__footer{padding-bottom:calc(10px + env(safe-area-inset-bottom, 0px))}
 }
 
 
