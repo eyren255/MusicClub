@@ -108,6 +108,15 @@ body{
 .viewer__controls{display:flex;gap:10px;justify-content:center;padding:10px 16px;background:var(--panel);border-top:1px solid var(--border);position:sticky;bottom:0;z-index:2}
 .viewer__controls .btn{padding:10px 12px}
 .viewer__controls .btn--ghost{background:var(--primary);border-color:var(--primary);color:#fff}
+.viewer__image-wrap.zoomed img{cursor:grab}
+.viewer__image-wrap img{will-change:transform}
+
+/* Fullscreen-like fallback for mobile browsers without Fullscreen API */
+.app.fullscreen-like .app__header,
+.app.fullscreen-like .app__toolbar,
+.app.fullscreen-like .sidebar,
+.app.fullscreen-like .app__footer{display:none}
+.app.fullscreen-like .app__main{grid-template-columns:1fr}
 .song-item .badge{margin-left:6px;font-size:12px;opacity:.8}
 .viewer__fallback{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted)}
 .fallback__emoji{font-size:48px}

@@ -361,7 +361,7 @@
 		if(now - lastTap < 300){ applyZoom(zoomScale > 1 ? 1 : 2); }
 		lastTap = now;
 	}, {passive:true});
-	// Pinch zoom
+    // Pinch zoom
 	let pinchStartDist = null;
 	viewer.addEventListener('touchmove', function(e){
 		if(e.touches && e.touches.length === 2){
@@ -372,7 +372,7 @@
 				pinchStartDist = dist;
 			}else{
 				const factor = dist / pinchStartDist;
-				applyZoom(Math.max(0.5, Math.min(4, zoomScale * factor)));
+                applyZoom(Math.max(1, Math.min(4, zoomScale * factor)));
 				pinchStartDist = dist;
 			}
 		}else{
@@ -381,9 +381,11 @@
 	}, {passive:true});
 
 	function applyZoom(scale, reset){
-		zoomScale = reset ? 1 : Math.max(0.5, Math.min(4, scale));
+		zoomScale = reset ? 1 : Math.max(1, Math.min(4, scale));
 		elements.image.style.transform = `scale(${zoomScale})`;
 		elements.image.style.transformOrigin = 'center center';
+		const wrap = document.querySelector('.viewer__image-wrap');
+		if(zoomScale > 1){ wrap.classList.add('zoomed'); } else { wrap.classList.remove('zoomed'); }
 	}
 
     function toggleFavorite(){
@@ -428,11 +430,14 @@
 	}
 
 	function toggleFullscreen(){
+		const root = document.querySelector('.app');
 		const el = document.documentElement;
 		if(!document.fullscreenElement){
-			if(el.requestFullscreen) el.requestFullscreen();
+			if(el.requestFullscreen){ el.requestFullscreen().catch(()=>{ root.classList.add('fullscreen-like'); }); }
+			else { root.classList.add('fullscreen-like'); }
 		}else{
-			if(document.exitFullscreen) document.exitFullscreen();
+			if(document.exitFullscreen){ document.exitFullscreen().catch(()=>{ root.classList.remove('fullscreen-like'); }); }
+			root.classList.remove('fullscreen-like');
 		}
 	}
 
