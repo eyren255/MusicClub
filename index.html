@@ -17,13 +17,14 @@
                 <h1 class="app__title">Sa Yar Ga Toe Pwell — Song Selector</h1>
             </div>
             <div class="app__controls">
+                <button id="toggleListBtn" class="btn btn--ghost" aria-expanded="true" aria-controls="songListPanel" title="Show/Hide list">☰ List</button>
                 <button id="prevBtn" class="btn" aria-label="Previous song">◀ Prev</button>
                 <button id="nextBtn" class="btn" aria-label="Next song">Next ▶</button>
             </div>
         </header>
 
         <main class="app__main">
-            <aside class="sidebar" aria-label="Song list">
+            <aside id="songListPanel" class="sidebar" aria-label="Song list">
                 <div class="sidebar__search">
                     <input id="searchInput" type="search" placeholder="Search songs or number…" aria-label="Search songs or number">
                 </div>

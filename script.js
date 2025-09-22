@@ -77,7 +77,9 @@
 		metaTitle: document.getElementById("metaTitle"),
 		prev: document.getElementById("prevBtn"),
 		next: document.getElementById("nextBtn"),
-		search: document.getElementById("searchInput")
+		search: document.getElementById("searchInput"),
+		listPanel: document.getElementById("songListPanel"),
+		toggleList: document.getElementById("toggleListBtn")
 	};
 
 	let currentIndex = 0; // 0-based
@@ -184,6 +186,35 @@
 			elements.image.hidden = false;
 		});
 		elements.search.addEventListener("input", applySearchFilter);
+		// Toggle list for mobile
+		elements.toggleList.addEventListener("click", function(){
+			const isOpen = elements.listPanel.classList.toggle("is-open");
+			elements.toggleList.setAttribute("aria-expanded", String(isOpen));
+		});
+
+	// Touch swipe navigation
+	let touchStartX = null;
+	let touchStartY = null;
+	function onTouchStart(e){
+		if(!e.touches || e.touches.length !== 1) return;
+		touchStartX = e.touches[0].clientX;
+		touchStartY = e.touches[0].clientY;
+	}
+	function onTouchEnd(e){
+		if(touchStartX == null || touchStartY == null) return;
+		const dx = (e.changedTouches && e.changedTouches[0].clientX || 0) - touchStartX;
+		const dy = (e.changedTouches && e.changedTouches[0].clientY || 0) - touchStartY;
+		const absX = Math.abs(dx);
+		const absY = Math.abs(dy);
+		if(absX > 40 && absX > absY){
+			if(dx < 0) selectNext(); else selectPrev();
+		}
+		touchStartX = touchStartY = null;
+	}
+	// Attach to viewer area for better UX
+	const viewer = document.querySelector(".viewer__image-wrap");
+	viewer.addEventListener("touchstart", onTouchStart, {passive:true});
+	viewer.addEventListener("touchend", onTouchEnd, {passive:true});
 
 	// Initial render
 		renderList();
