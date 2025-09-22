@@ -194,7 +194,9 @@
 		elements.image.hidden = false;
 		elements.fallback.hidden = true;
 		elements.image.alt = title;
-        elements.image.src = src + `?v=${encodeURIComponent(src.length)}`; // cache-bust lightly
+		elements.image.classList.remove('is-loaded');
+		elements.image.classList.add('is-loading');
+		elements.image.src = src + `?v=${encodeURIComponent(src.length)}`; // cache-bust lightly
         // Preload neighbors
         try{
             const songs = getSongs();
@@ -277,6 +279,8 @@
 			// Ensure fallback is hidden when image loads successfully
 			elements.fallback.hidden = true;
 			elements.image.hidden = false;
+			elements.image.classList.remove('is-loading');
+			elements.image.classList.add('is-loaded');
 		});
 
 		// No landing logic; standalone mainmenu.html is used now

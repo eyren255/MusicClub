@@ -21,6 +21,11 @@ body{
     color:var(--text);
     -webkit-tap-highlight-color: transparent;
 }
+/* Animations */
+@keyframes fadeIn{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:scale(1)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulseIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 
 .app{display:flex;flex-direction:column;min-height:100vh}
 .landing{display:flex;align-items:center;justify-content:center;padding:40px 16px}
@@ -33,7 +38,7 @@ body{
 .home__hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;margin:16px 0 20px 0}
 .home__logo{width:120px;height:120px;border-radius:60px;border:1px solid var(--border);background:#0b0e13;object-fit:cover}
 .home__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.card{display:block;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--panel);text-decoration:none;color:var(--text);transition:transform .12s ease, background .12s ease}
+.card{display:block;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--panel);text-decoration:none;color:var(--text);transition:transform .12s ease, background .12s ease;animation:slideUp .25s ease}
 .card:hover{transform:translateY(-2px);background:#15261a}
 .card__icon{font-size:28px;margin-bottom:8px}
 .card__title{font-weight:600;margin-bottom:4px}
@@ -51,7 +56,7 @@ body{
 .brand__logo{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:#0b0e13;object-fit:cover}
 .app__title{margin:0;font-size:18px;font-weight:600}
 .app__controls{display:flex;gap:8px}
-.app__toolbar{display:flex;gap:8px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--panel);position:sticky;top:0;z-index:5}
+.app__toolbar{display:flex;gap:8px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--panel);position:sticky;top:0;z-index:5;animation:slideUp .25s ease}
 
 .btn{
     background:var(--primary);
@@ -84,9 +89,10 @@ body{
 }
 .song-list{list-style:decimal inside;margin:0;padding:8px;overflow:auto}
 .empty-state{padding:16px;color:var(--muted)}
-.song-item{padding:8px 10px;border-radius:8px;cursor:pointer;display:flex;gap:8px;align-items:center}
+.song-item{padding:8px 10px;border-radius:8px;cursor:pointer;display:flex;gap:8px;align-items:center;transition:background .18s ease, transform .18s ease}
 .song-item:hover{background:#1a2030}
 .song-item.active{background:#22314f}
+.song-item:active{transform:scale(.99)}
 .song-index{opacity:.7;width:28px;flex:0 0 auto;text-align:right}
 .song-title{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sidebar__tabs{display:flex;gap:8px;padding:8px;border-bottom:1px solid var(--border);position:sticky;top:58px;background:var(--panel);z-index:1;flex-wrap:wrap}
