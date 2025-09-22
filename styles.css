@@ -122,7 +122,7 @@ body{
     .app__main{grid-template-columns:1fr}
     .sidebar{order:2}
     .viewer{order:1}
-    .viewer__image-wrap{padding:8px;padding-bottom:calc(64px + env(safe-area-inset-bottom, 0px))}
+    .viewer__image-wrap{padding:8px}
     .viewer__image-wrap img{max-height:85svh}
     .btn{padding:14px 18px}
 }
@@ -131,8 +131,9 @@ body{
 @media (max-width: 900px){
     .sidebar{display:none}
     .sidebar.is-open{display:flex}
-    /* Move viewer tools to bottom center on mobile */
-    .viewer__tools{left:50%;transform:translateX(-50%);right:auto;bottom:8px;justify-content:center;gap:10px}
+    /* Place viewer tools below the image, not on top of it */
+    .viewer__image-wrap{display:flex;flex-direction:column;align-items:center}
+    .viewer__tools{position:static;left:auto;right:auto;bottom:auto;transform:none;justify-content:center;gap:10px;margin-top:8px}
     .viewer__tools .btn{padding:10px 14px}
     .app__footer{padding-bottom:calc(10px + env(safe-area-inset-bottom, 0px))}
 }
