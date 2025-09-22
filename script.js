@@ -95,7 +95,7 @@
 		fsToggle: document.getElementById("fsToggle"),
 		zoomInBtn: document.getElementById("zoomInBtn"),
 		zoomOutBtn: document.getElementById("zoomOutBtn"),
-        zoomResetBtn: document.getElementById("zoomResetBtn"),
+		zoomResetBtn: document.getElementById("zoomResetBtn"),
         colMusicList: document.getElementById("colMusicList"),
         colSaYar: document.getElementById("colSaYar")
 	};
@@ -285,6 +285,9 @@
 
 		// No landing logic; standalone mainmenu.html is used now
 		elements.search.addEventListener("input", applySearchFilter);
+		const clearBtn = document.getElementById('clearSearch');
+		if(clearBtn){ clearBtn.addEventListener('click', () => { elements.search.value=''; applySearchFilter(); elements.search.focus(); }); }
+		document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ elements.search.value=''; applySearchFilter(); elements.search.focus(); }});
         // URL params to preset collection/tab/open list/focus search and song select
 		try{
 			const params = new URLSearchParams(location.search);
@@ -411,25 +414,50 @@
 	function setTab(tab){
 		activeTab = tab;
         saveJson('activeTab', activeTab);
-		[elements.tabAll, elements.tabFav, elements.tabRecent].forEach(btn => btn.classList.remove('is-active'));
-		if(tab === 'all') elements.tabAll.classList.add('is-active');
-		if(tab === 'fav') elements.tabFav.classList.add('is-active');
-		if(tab === 'recent') elements.tabRecent.classList.add('is-active');
+		[elements.tabAll, elements.tabFav, elements.tabRecent].forEach(btn => { btn.classList.remove('is-active'); btn.removeAttribute('aria-current'); });
+		if(tab === 'all'){ elements.tabAll.classList.add('is-active'); elements.tabAll.setAttribute('aria-current','true'); }
+		if(tab === 'fav'){ elements.tabFav.classList.add('is-active'); elements.tabFav.setAttribute('aria-current','true'); }
+		if(tab === 'recent'){ elements.tabRecent.classList.add('is-active'); elements.tabRecent.setAttribute('aria-current','true'); }
 		renderList();
 	}
 
 	function setCollection(name){
 		currentCollection = name;
         saveJson('lastCollection', currentCollection);
-		[elements.colMusicList, elements.colSaYar].forEach(btn => btn.classList.remove('is-active'));
-		if(name === 'Music Club Song List') elements.colMusicList.classList.add('is-active');
-		if(name === 'Sa Yar Ga Toe Pwell') elements.colSaYar.classList.add('is-active');
+		[elements.colMusicList, elements.colSaYar].forEach(btn => { btn.classList.remove('is-active'); btn.removeAttribute('aria-current'); });
+		if(name === 'Music Club Song List'){ elements.colMusicList.classList.add('is-active'); elements.colMusicList.setAttribute('aria-current','true'); }
+		if(name === 'Sa Yar Ga Toe Pwell'){ elements.colSaYar.classList.add('is-active'); elements.colSaYar.setAttribute('aria-current','true'); }
 		filteredIndexes = getSongs().map((_, i) => i);
 		currentIndex = 0;
 		renderList();
 		updateMeta();
 		loadImageForCurrent();
 	}
+
+	// Settings drawer
+	(function initSettings(){
+		const drawer = document.getElementById('settingsDrawer');
+		const openBtn = document.getElementById('settingsBtn');
+		const closeBtn = document.getElementById('closeSettings');
+		const setReduceMotion = document.getElementById('setReduceMotion');
+		const setThemeLight = document.getElementById('setThemeLight');
+		function open(){ drawer.hidden = false; }
+		function close(){ drawer.hidden = true; }
+		if(openBtn) openBtn.addEventListener('click', open);
+		if(closeBtn) closeBtn.addEventListener('click', close);
+		// Persist settings
+		const saved = loadJson('settings', {});
+		if(saved.reduceMotion){ document.documentElement.setAttribute('data-reduce-motion','1'); setReduceMotion.checked = true; }
+		if(saved.themeLight){ document.documentElement.setAttribute('data-theme','light'); setThemeLight.checked = true; }
+		setReduceMotion?.addEventListener('change', ()=>{
+			const on = !!setReduceMotion.checked; saved.reduceMotion = on; saveJson('settings', saved);
+			document.documentElement.toggleAttribute('data-reduce-motion', on);
+		});
+		setThemeLight?.addEventListener('change', ()=>{
+			const on = !!setThemeLight.checked; saved.themeLight = on; saveJson('settings', saved);
+			if(on) document.documentElement.setAttribute('data-theme','light'); else document.documentElement.removeAttribute('data-theme');
+		});
+	})();
 
 	function toggleFullscreen(){
 		const root = document.querySelector('.app');

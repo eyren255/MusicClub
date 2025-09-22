@@ -27,12 +27,14 @@
             <button id="toggleListBtn" class="btn btn--ghost" aria-expanded="true" aria-controls="songListPanel" title="Show/Hide list">☰ List</button>
             <button id="prevBtn" class="btn" aria-label="Previous song">◀ Prev</button>
             <button id="nextBtn" class="btn" aria-label="Next song">Next ▶</button>
+            <button id="settingsBtn" class="btn btn--ghost" aria-haspopup="dialog" title="Settings">Settings</button>
         </div>
 
         <main class="app__main">
             <aside id="songListPanel" class="sidebar" aria-label="Song list">
                 <div class="sidebar__search">
                     <input id="searchInput" type="search" placeholder="Search songs or number…" aria-label="Search songs or number">
+                    <button id="clearSearch" class="btn btn--ghost small" aria-label="Clear search">✕</button>
                 </div>
                 <div class="sidebar__tabs" role="tablist" aria-label="Collections">
                     <button id="colMusicList" class="tab" role="tab" aria-selected="false">Music Club Song List</button>
@@ -67,6 +69,19 @@
                 </div>
             </section>
         </main>
+
+        <div id="settingsDrawer" class="drawer" role="dialog" aria-modal="true" aria-labelledby="settingsTitle" hidden>
+            <div class="drawer__panel">
+                <div class="drawer__header">
+                    <h3 id="settingsTitle">Settings</h3>
+                    <button id="closeSettings" class="btn btn--ghost small" aria-label="Close">✕</button>
+                </div>
+                <div class="drawer__content">
+                    <label class="switch"><input id="setReduceMotion" type="checkbox"> Reduce motion</label>
+                    <label class="switch"><input id="setThemeLight" type="checkbox"> Light theme</label>
+                </div>
+            </div>
+        </div>
 
         <footer class="app__footer">
             <div>Tip: Use ↑/↓ to move selection, ←/→ to change image.</div>
