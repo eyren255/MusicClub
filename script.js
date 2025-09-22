@@ -225,16 +225,19 @@
 		});
 
         // Landing page toggle
-		try{
-			const seen = localStorage.getItem('landingSeen');
+        try{
+            const seen = localStorage.getItem('landingSeen');
             const appShell = document.getElementById('appShell');
             if(!seen){ elements.landing.hidden = false; appShell.hidden = true; }
-			elements.enterBtn.addEventListener('click', () => {
-				localStorage.setItem('landingSeen','1');
-                elements.landing.hidden = true;
-                appShell.hidden = false;
-			});
-		}catch(_){ /* ignore */ }
+            else { elements.landing.hidden = true; appShell.hidden = false; }
+            if(elements.enterBtn){
+                elements.enterBtn.addEventListener('click', () => {
+                    localStorage.setItem('landingSeen','1');
+                    elements.landing.hidden = true;
+                    appShell.hidden = false;
+                });
+            }
+        }catch(_){ /* ignore */ }
 		elements.search.addEventListener("input", applySearchFilter);
 		// Toggle list for mobile
 		elements.toggleList.addEventListener("click", function(){

@@ -90,7 +90,7 @@ body{
     background:#101812;
     display:block;
 }
-.viewer__tools{position:absolute;display:flex;gap:8px;right:16px;bottom:16px}
+.viewer__tools{position:absolute;display:flex;gap:8px;right:16px;bottom:16px;z-index:3}
 .viewer__image-wrap{position:relative}
 .viewer__tools .btn{padding:8px 10px}
 .song-item .badge{margin-left:6px;font-size:12px;opacity:.8}
