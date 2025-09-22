@@ -51,6 +51,7 @@ body{
 .brand__logo{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:#0b0e13;object-fit:cover}
 .app__title{margin:0;font-size:18px;font-weight:600}
 .app__controls{display:flex;gap:8px}
+.app__toolbar{display:flex;gap:8px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--panel);position:sticky;top:0;z-index:5}
 
 .btn{
     background:var(--primary);
@@ -117,7 +118,7 @@ body{
 
 @media (max-width: 900px){
     .app__header{gap:8px}
-    .app__controls{width:100%;justify-content:flex-start;gap:8px;margin-top:6px}
+    .app__controls{width:auto}
     .app__title{font-size:16px}
     .app__main{grid-template-columns:1fr}
     .sidebar{order:2}
