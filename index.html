@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Song Selector - Sa Yar Ga Toe Pwell</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app">
+        <header class="app__header">
+            <h1 class="app__title">Sa Yar Ga Toe Pwell — Song Selector</h1>
+            <div class="app__controls">
+                <button id="prevBtn" class="btn" aria-label="Previous song">◀ Prev</button>
+                <button id="nextBtn" class="btn" aria-label="Next song">Next ▶</button>
+            </div>
+        </header>
+
+        <main class="app__main">
+            <aside class="sidebar" aria-label="Song list">
+                <div class="sidebar__search">
+                    <input id="searchInput" type="search" placeholder="Search songs or number…" aria-label="Search songs or number">
+                </div>
+                <ol id="songList" class="song-list" start="1"></ol>
+            </aside>
+
+            <section class="viewer" aria-live="polite">
+                <div class="viewer__image-wrap">
+                    <img id="songImage" alt="Selected song cover" />
+                    <div id="imageFallback" class="viewer__fallback" hidden>
+                        <div class="fallback__emoji">🎵</div>
+                        <div class="fallback__text">No image available</div>
+                    </div>
+                </div>
+                <div class="viewer__meta">
+                    <div class="meta__index" id="metaIndex">1 / 30</div>
+                    <div class="meta__title" id="metaTitle">—</div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app__footer">
+            <div>Tip: Use ↑/↓ to move selection, ←/→ to change image.</div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+
