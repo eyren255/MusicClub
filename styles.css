@@ -71,10 +71,10 @@ body{
 .song-title{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 .viewer{display:flex;flex-direction:column;min-width:0}
-.viewer__image-wrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;padding:16px}
+.viewer__image-wrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;padding:12px}
 .viewer__image-wrap img{
     max-width:100%;
-    max-height:70vh;
+    max-height:90vh;
     border-radius:12px;
     border:1px solid var(--border);
     background:#101812;
@@ -91,7 +91,8 @@ body{
     .app__main{grid-template-columns:1fr}
     .sidebar{order:2}
     .viewer{order:1}
-    .viewer__image-wrap img{max-height:55vh}
+    .viewer__image-wrap{padding:8px}
+    .viewer__image-wrap img{max-height:85vh}
     .btn{padding:12px 16px}
 }
 
