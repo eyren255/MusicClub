@@ -139,6 +139,11 @@
 		renderList();
 		updateMeta();
 		loadImageForCurrent();
+		// On small screens, auto-close the list to reveal the image
+		if(window.innerWidth <= 900 && elements.listPanel.classList.contains("is-open")){
+			elements.listPanel.classList.remove("is-open");
+			elements.toggleList.setAttribute("aria-expanded", "false");
+		}
 	}
 
 	function selectPrev(){ selectIndex(currentIndex - 1); }
@@ -193,6 +198,10 @@
 		elements.toggleList.addEventListener("click", function(){
 			const isOpen = elements.listPanel.classList.toggle("is-open");
 			elements.toggleList.setAttribute("aria-expanded", String(isOpen));
+			if(isOpen){
+				// Focus search shortly after open for mobile keyboards
+				setTimeout(() => elements.search.focus(), 50);
+			}
 		});
 
 	// Touch swipe navigation
