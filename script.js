@@ -1,8 +1,9 @@
 (function(){
 	"use strict";
 
-	/** Song order as requested (1..30) */
-	const songs = [
+	/** Collections */
+	const collections = {
+		"Sa Yar Ga Toe Pwell": [
 		"စတော်ဘယ်ရီချစ်သဲချင်",
 		"မြေပြန့်သူလေး",
 		"မျက်သွယ်",
@@ -33,7 +34,11 @@
 		"ဆွေးတယ်",
 		"နွယ်နီ",
 		"သူငယ်ချင်း"
-	];
+		],
+		"Music Club Song List": []
+	};
+	let currentCollection = "Sa Yar Ga Toe Pwell";
+	function getSongs(){ return collections[currentCollection] || []; }
 
 	/** Map human-readable titles to image filenames in folder `Sa Yar Ga Toe Pwell` */
 	const filenameByTitle = {
@@ -94,7 +99,7 @@
 	};
 
 	let currentIndex = 0; // 0-based
-	let filteredIndexes = songs.map((_, i) => i);
+	let filteredIndexes = getSongs().map((_, i) => i);
 	let favorites = loadJson('favorites', []);
 	let recent = loadJson('recent', []);
 	let activeTab = 'all';
@@ -109,6 +114,7 @@
 
 	function renderList(){
 		elements.list.innerHTML = "";
+		const songs = getSongs();
 		let sourceIndexes = filteredIndexes;
 		if(activeTab === 'fav') sourceIndexes = sourceIndexes.filter(i => favorites.includes(i));
 		if(activeTab === 'recent') sourceIndexes = sourceIndexes.filter(i => recent.includes(i));
@@ -135,11 +141,13 @@
 	}
 
 	function updateMeta(){
+		const songs = getSongs();
 		elements.metaIndex.textContent = `${currentIndex + 1} / ${songs.length}`;
 		elements.metaTitle.textContent = songs[currentIndex] || "—";
 	}
 
 	function loadImageForCurrent(){
+		const songs = getSongs();
 		const title = songs[currentIndex];
 		const src = filenameByTitle[title];
 		// Always reset fallback state before attempting to load
@@ -162,6 +170,7 @@
 	}
 
 	function selectIndex(index){
+		const songs = getSongs();
 		if(index < 0 || index >= songs.length) return;
 		currentIndex = index;
 		renderList();
@@ -195,6 +204,7 @@
 		const qRaw = elements.search.value || "";
 		const q = qRaw.toLowerCase();
 		const qDigits = q.replace(/[^0-9]/g, "");
+		const songs = getSongs();
 		filteredIndexes = songs
 			.map((title, i) => ({ title, i }))
 			.filter(x => {
@@ -249,6 +259,9 @@
 		elements.tabAll.addEventListener('click', () => setTab('all'));
 		elements.tabFav.addEventListener('click', () => setTab('fav'));
 		elements.tabRecent.addEventListener('click', () => setTab('recent'));
+		// Collection tabs
+		elements.colMusicList.addEventListener('click', () => setCollection('Music Club Song List'));
+		elements.colSaYar.addEventListener('click', () => setCollection('Sa Yar Ga Toe Pwell'));
 		// Favorites toggle
 		elements.favToggle.addEventListener('click', toggleFavorite);
 		// Fullscreen toggle
@@ -337,6 +350,18 @@
 		if(tab === 'fav') elements.tabFav.classList.add('is-active');
 		if(tab === 'recent') elements.tabRecent.classList.add('is-active');
 		renderList();
+	}
+
+	function setCollection(name){
+		currentCollection = name;
+		[elements.colMusicList, elements.colSaYar].forEach(btn => btn.classList.remove('is-active'));
+		if(name === 'Music Club Song List') elements.colMusicList.classList.add('is-active');
+		if(name === 'Sa Yar Ga Toe Pwell') elements.colSaYar.classList.add('is-active');
+		filteredIndexes = getSongs().map((_, i) => i);
+		currentIndex = 0;
+		renderList();
+		updateMeta();
+		loadImageForCurrent();
 	}
 
 	function toggleFullscreen(){
