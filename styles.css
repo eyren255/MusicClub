@@ -9,6 +9,9 @@
     --border:#1e2a21;
 }
 
+/* Ensure hidden elements never display */
+[hidden]{display:none !important}
+
 *{box-sizing:border-box}
 html,body{height:100%}
 body{

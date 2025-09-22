@@ -115,6 +115,9 @@
 	function loadImageForCurrent(){
 		const title = songs[currentIndex];
 		const src = filenameByTitle[title];
+		// Always reset fallback state before attempting to load
+		elements.fallback.hidden = true;
+		elements.image.hidden = false;
 		if(!src){
 			showFallback();
 			return;
