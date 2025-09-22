@@ -325,7 +325,10 @@
         // Favorites toggle
 		elements.favToggle.addEventListener('click', toggleFavorite);
 		// Fullscreen toggle
-		elements.fsToggle.addEventListener('click', toggleFullscreen);
+    // Disable fullscreen toggle on small screens
+    if(window.innerWidth > 900){
+        elements.fsToggle.addEventListener('click', toggleFullscreen);
+    }
 		// Zoom controls
 		elements.zoomInBtn.addEventListener('click', () => applyZoom(zoomScale * 1.2));
 		elements.zoomOutBtn.addEventListener('click', () => applyZoom(zoomScale / 1.2));

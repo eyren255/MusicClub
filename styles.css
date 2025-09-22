@@ -146,6 +146,8 @@ body{
     .viewer__image-wrap{display:flex;flex-direction:column;align-items:center}
     .viewer__controls{justify-content:center;gap:10px;padding-bottom:calc(12px + env(safe-area-inset-bottom, 0px))}
     .viewer__controls .btn{padding:12px 14px}
+    /* Hide fullscreen button on mobile */
+    #fsToggle{display:none}
     .app__footer{padding-bottom:calc(10px + env(safe-area-inset-bottom, 0px))}
 }
 
