@@ -434,30 +434,7 @@
 		loadImageForCurrent();
 	}
 
-	// Settings drawer
-	(function initSettings(){
-		const drawer = document.getElementById('settingsDrawer');
-		const openBtn = document.getElementById('settingsBtn');
-		const closeBtn = document.getElementById('closeSettings');
-		const setReduceMotion = document.getElementById('setReduceMotion');
-		const setThemeLight = document.getElementById('setThemeLight');
-		function open(){ drawer.hidden = false; }
-		function close(){ drawer.hidden = true; }
-		if(openBtn) openBtn.addEventListener('click', open);
-		if(closeBtn) closeBtn.addEventListener('click', close);
-		// Persist settings
-		const saved = loadJson('settings', {});
-		if(saved.reduceMotion){ document.documentElement.setAttribute('data-reduce-motion','1'); setReduceMotion.checked = true; }
-		if(saved.themeLight){ document.documentElement.setAttribute('data-theme','light'); setThemeLight.checked = true; }
-		setReduceMotion?.addEventListener('change', ()=>{
-			const on = !!setReduceMotion.checked; saved.reduceMotion = on; saveJson('settings', saved);
-			document.documentElement.toggleAttribute('data-reduce-motion', on);
-		});
-		setThemeLight?.addEventListener('change', ()=>{
-			const on = !!setThemeLight.checked; saved.themeLight = on; saveJson('settings', saved);
-			if(on) document.documentElement.setAttribute('data-theme','light'); else document.documentElement.removeAttribute('data-theme');
-		});
-	})();
+    // Settings drawer removed
 
 	function toggleFullscreen(){
 		const root = document.querySelector('.app');

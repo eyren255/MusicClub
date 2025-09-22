@@ -162,12 +162,7 @@ body{
 .meta__title{color:var(--text);font-weight:600}
 
 .app__footer{padding:12px 16px;border-top:1px solid var(--border);color:var(--muted);background:var(--panel);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-/* Drawer */
-.drawer{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;justify-content:flex-end;z-index:30}
-.drawer__panel{width:320px;max-width:85vw;background:var(--panel);border-left:1px solid var(--border);height:100%;display:flex;flex-direction:column}
-.drawer__header{display:flex;justify-content:space-between;align-items:center;padding:12px 12px;border-bottom:1px solid var(--border)}
-.drawer__content{padding:12px;display:flex;flex-direction:column;gap:10px}
-.switch{display:flex;gap:8px;align-items:center}
+/* Drawer removed */
 .credit{opacity:1;color:var(--text);font-weight:600}
 .credit strong{color:var(--primary)}
 
