@@ -80,8 +80,8 @@
 		search: document.getElementById("searchInput"),
 		listPanel: document.getElementById("songListPanel"),
 		toggleList: document.getElementById("toggleListBtn"),
-		landing: document.getElementById("landing"),
-		enterBtn: document.getElementById("enterBtn"),
+		landing: null,
+		enterBtn: null,
 		// Favorites/Recent & tools
 		tabAll: document.getElementById("tabAll"),
 		tabFav: document.getElementById("tabFav"),
@@ -224,20 +224,7 @@
 			elements.image.hidden = false;
 		});
 
-        // Landing page toggle
-        try{
-            const seen = localStorage.getItem('landingSeen');
-            const appShell = document.getElementById('appShell');
-            if(!seen){ elements.landing.hidden = false; appShell.hidden = true; }
-            else { elements.landing.hidden = true; appShell.hidden = false; }
-            if(elements.enterBtn){
-                elements.enterBtn.addEventListener('click', () => {
-                    localStorage.setItem('landingSeen','1');
-                    elements.landing.hidden = true;
-                    appShell.hidden = false;
-                });
-            }
-        }catch(_){ /* ignore */ }
+		// No landing logic; standalone mainmenu.html is used now
 		elements.search.addEventListener("input", applySearchFilter);
 		// Toggle list for mobile
 		elements.toggleList.addEventListener("click", function(){
