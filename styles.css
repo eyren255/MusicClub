@@ -74,7 +74,7 @@ body{
 .viewer__image-wrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;padding:12px}
 .viewer__image-wrap img{
     max-width:100%;
-    max-height:90vh;
+    max-height:90svh; /* small viewport height accounts for mobile browser UI */
     border-radius:12px;
     border:1px solid var(--border);
     background:#101812;
@@ -92,7 +92,7 @@ body{
     .sidebar{order:2}
     .viewer{order:1}
     .viewer__image-wrap{padding:8px}
-    .viewer__image-wrap img{max-height:85vh}
+    .viewer__image-wrap img{max-height:85svh}
     .btn{padding:12px 16px}
 }
 
