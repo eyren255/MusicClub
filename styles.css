@@ -25,7 +25,12 @@ body{
 @keyframes fadeIn{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:scale(1)}}
 @keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pulseIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
-@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+/* Respect reduced motion but keep lightweight decorative EQ animation */
+@media (prefers-reduced-motion: reduce){
+    .card, .song-item, .viewer__controls, .viewer__image-wrap img, .app__toolbar {
+        animation:none!important;transition:none!important;
+    }
+}
 
 .app{display:flex;flex-direction:column;min-height:100vh}
 .landing{display:flex;align-items:center;justify-content:center;padding:40px 16px}
@@ -36,20 +41,31 @@ body{
 .landing__enter{width:100%}
 .home{padding:20px}
 .home{background:radial-gradient(1200px 600px at 20% -10%, rgba(58,168,86,.12), rgba(0,0,0,0)), radial-gradient(1000px 500px at 80% 110%, rgba(58,168,86,.08), rgba(0,0,0,0))}
+/* Animated gradient background */
+.bg-anim{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(800px 400px at 10% 10%, rgba(58,168,86,.08), transparent), radial-gradient(900px 500px at 90% 90%, rgba(58,168,86,.06), transparent)}
+.bg-anim:before,.bg-anim:after{content:"";position:absolute;inset:-20%;background:conic-gradient(from 0deg, transparent, rgba(58,168,86,.08), transparent);filter:blur(40px);animation:spin 18s linear infinite}
+.bg-anim:after{animation-duration:26s;opacity:.7}
+@keyframes spin{to{transform:rotate(1turn)}}
 .home__hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;margin:16px 0 20px 0}
 .home__logo{width:120px;height:120px;border-radius:60px;border:1px solid var(--border);background:#0b0e13;object-fit:cover}
 .tagline{font-size:12px;color:var(--muted)}
 .home__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .card--primary{border-color:var(--primary);background:#18311f}
 .card--primary .card__title{color:#fff}
-.home__eq{display:flex;gap:4px;margin-top:10px;height:16px}
-.home__eq span{display:block;width:6px;background:var(--primary);border-radius:3px;animation:bar 1s ease-in-out infinite;transform-origin:bottom}
+/* Album art grid */
+.home__album-grid{display:grid;grid-template-columns:repeat(6, minmax(0,1fr));gap:10px;margin-top:24px;opacity:.9}
+.home__album-grid img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;border:1px solid var(--border);filter:blur(0.2px) saturate(1.05);transition:transform .2s ease, filter .2s ease}
+.home__album-grid img:hover{transform:scale(1.03);filter:saturate(1.2)}
+@media (max-width: 900px){.home__album-grid{grid-template-columns:repeat(3,1fr)}}
+.home__eq{display:flex;gap:5px;margin-top:12px;height:18px}
+.home__eq span{display:block;width:6px;height:100%;background:var(--primary);border-radius:3px;transform-origin:bottom;animation:eqPulse 1s ease-in-out infinite alternate}
 .home__eq span:nth-child(1){animation-delay:0s}
 .home__eq span:nth-child(2){animation-delay:.1s}
 .home__eq span:nth-child(3){animation-delay:.2s}
 .home__eq span:nth-child(4){animation-delay:.3s}
 .home__eq span:nth-child(5){animation-delay:.4s}
-@keyframes bar{0%{height:6px;opacity:.7}35%{height:16px;opacity:1}70%{height:9px;opacity:.85}100%{height:6px;opacity:.7}}
+@keyframes eqPulse{0%{transform:scaleY(.45);opacity:.85}50%{transform:scaleY(1.1);opacity:1}100%{transform:scaleY(.6);opacity:.9}}
+@-webkit-keyframes eqPulse{0%{-webkit-transform:scaleY(.45);opacity:.85}50%{-webkit-transform:scaleY(1.1);opacity:1}100%{-webkit-transform:scaleY(.6);opacity:.9}}
 .card:hover{transform:translateY(-2px) scale(1.02)}
 .card{display:block;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--panel);text-decoration:none;color:var(--text);transition:transform .12s ease, background .12s ease;animation:slideUp .25s ease}
 .card:hover{transform:translateY(-2px);background:#15261a}
