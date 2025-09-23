@@ -33,7 +33,8 @@
 		"နင်စေရင်",
 		"ဆွေးတယ်",
 		"နွယ်နီ",
-		"သူငယ်ချင်း"
+		"သူငယ်ချင်း",
+		"မောင့်မျက်ရည်၀ိုင်း"
 		],
 		"Music Club Song List": []
 	};
@@ -71,7 +72,8 @@
 		"နင်စေရင်": "Sa Yar Ga Toe Pwell/နင်စေရင်.png",
 		"ဆွေးတယ်": "Sa Yar Ga Toe Pwell/ဆွေးတယ်.png",
 		"နွယ်နီ": "Sa Yar Ga Toe Pwell/နွယ်နီ.png",
-		"သူငယ်ချင်း": "Sa Yar Ga Toe Pwell/သူငယ်ချင်း.png"
+		"သူငယ်ချင်း": "Sa Yar Ga Toe Pwell/သူငယ်ချင်း.png",
+		"မောင့်မျက်ရည်၀ိုင်း": "Sa Yar Ga Toe Pwell/မောင့်မျက်ရည်၀ိုင်း.png"
 	};
 
     const elements = {
