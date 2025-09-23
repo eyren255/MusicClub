@@ -44,7 +44,7 @@
 	/** Map human-readable titles to image filenames in folder `Sa Yar Ga Toe Pwell` */
 	const filenameByTitle = {
 		"စတော်ဘယ်ရီချစ်သဲချင်": "Sa Yar Ga Toe Pwell/စတော်ဘယ်ရီချစ်သဲချင်.png",
-		"မြေပြန့်သူလေး": "Sa Yar Ga Toe Pwell/မြေပြန့်သူလေး.png",
+		"မြေပြန့်သူလေး": "Sa Yar Ga Toe Pwell/မြေပြန့်သူလေး.png",
 		"မျက်သွယ်": "Sa Yar Ga Toe Pwell/မျက်သွယ်.png",
 		"ရေစီကြောင်းလေး": "Sa Yar Ga Toe Pwell/ရေစီကြောင်းလေး.png",
 		"ဖက်ထားမယ်": "Sa Yar Ga Toe Pwell/ဖက်ထားမယ်.png",
