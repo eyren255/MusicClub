@@ -181,6 +181,12 @@ body{
     .app__toolbar{position:sticky;top:0;z-index:30;background:var(--panel);box-shadow:0 6px 16px rgba(0,0,0,.35)}
     .app__toolbar .btn--ghost{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.12)}
     .app__toolbar .btn--ghost:active{background:rgba(255,255,255,0.12)}
+    /* Ensure toolbar fits: allow wrapping and balanced widths */
+    .app__toolbar{display:flex;flex-wrap:wrap;gap:8px;padding:8px 10px}
+    .app__toolbar .btn{flex:1 1 calc(33.33% - 8px);min-width:110px}
+    @media (max-width: 520px){
+        .app__toolbar .btn{flex:1 1 calc(50% - 8px);min-width:140px}
+    }
 }
 
 /* Collapsible list on mobile */
