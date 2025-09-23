@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="icon" href="MusicClubLogo.PNG" type="image/png">
     <link rel="apple-touch-icon" href="MusicClubLogo.PNG">
-    <link rel="stylesheet" href="styles.css?v=3">
+    <link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
     <div class="app">
@@ -23,16 +23,30 @@
             </div>
             <span class="credit-badge">Website made by <strong>Shin Myat Tun</strong></span>
         </header>
+        
+        <!-- Breadcrumb Navigation -->
+        <nav class="breadcrumb" aria-label="You are here">
+            <ol class="breadcrumb__list">
+                <li class="breadcrumb__item">
+                    <a href="mainmenu.html" class="breadcrumb__link">🏠 Home</a>
+                </li>
+                <li class="breadcrumb__separator" aria-hidden="true">›</li>
+                <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">
+                    <span class="breadcrumb__link">🎵 Songs</span>
+                </li>
+            </ol>
+        </nav>
 
         <div class="app__toolbar">
-            <a href="mainmenu.html" class="btn btn--ghost" title="Home">Home</a>
-            <button id="toggleListBtn" class="btn btn--ghost" aria-expanded="true" aria-controls="songListPanel" title="Show/Hide list">☰ List</button>
-            <button id="prevBtn" class="btn" aria-label="Previous song">◀ Prev</button>
-            <button id="nextBtn" class="btn" aria-label="Next song">Next ▶</button>
-            <button id="favToggle" class="btn btn--ghost" title="Favorite">♡</button>
-            <button id="randomBtn" class="btn btn--ghost" title="Random song">Random</button>
-            <button id="shareBtn" class="btn" title="Share link">Share</button>
-            <button id="helpBtn" class="btn btn--ghost" title="Shortcuts">?</button>
+            <a href="mainmenu.html" class="btn btn--ghost" title="Home (Alt+H)">🏠 Home</a>
+            <button id="toggleListBtn" class="btn btn--ghost" aria-expanded="true" aria-controls="songListPanel" title="Show/Hide list (L)">☰ List</button>
+            <button id="prevBtn" class="btn" aria-label="Previous song (←)" title="Previous song (←)">◀ Prev</button>
+            <button id="nextBtn" class="btn" aria-label="Next song (→)" title="Next song (→)">Next ▶</button>
+            <button id="favToggle" class="btn btn--ghost" title="Favorite (F)">♡</button>
+            <button id="randomBtn" class="btn btn--ghost" title="Random song (R)">🎲 Random</button>
+            <button id="shareBtn" class="btn" title="Share link (S)">📤 Share</button>
+            <button id="helpBtn" class="btn btn--ghost" title="Shortcuts (?)">❓ Help</button>
+            <button id="quickNavBtn" class="btn btn--ghost" title="Quick Navigation (Alt+Q)">⚡</button>
         </div>
 
         <main class="app__main">
@@ -94,13 +108,52 @@
         
 
         <footer class="app__footer">
-            <div>Tip: Use ↑/↓ to move selection, ←/→ to change image.</div>
+            <div>Tip: Use ↑/↓ to move selection, ←/→ to change image. Press ? for all shortcuts.</div>
            
         </footer>
+        
+        <!-- Back to Top Button -->
+        <button id="backToTop" class="back-to-top" title="Back to top (Alt+T)" aria-label="Back to top" hidden>
+            <span class="back-to-top__icon">↑</span>
+        </button>
+        
+        <!-- Quick Navigation Menu -->
+        <div id="quickNavMenu" class="quick-nav" hidden role="dialog" aria-labelledby="quickNavTitle">
+            <div class="quick-nav__panel">
+                <div class="quick-nav__header">
+                    <h3 id="quickNavTitle">Quick Navigation</h3>
+                    <button id="quickNavClose" class="btn btn--ghost small" aria-label="Close">✕</button>
+                </div>
+                <div class="quick-nav__content">
+                    <a href="mainmenu.html" class="quick-nav__item">
+                        <span class="quick-nav__icon">🏠</span>
+                        <span class="quick-nav__text">Home</span>
+                        <span class="quick-nav__shortcut">Alt+H</span>
+                    </a>
+                    <a href="learn.html" class="quick-nav__item">
+                        <span class="quick-nav__icon">📚</span>
+                        <span class="quick-nav__text">Learn</span>
+                        <span class="quick-nav__shortcut">Ctrl+2</span>
+                    </a>
+                    <button class="quick-nav__item" onclick="document.getElementById('searchInput').focus()">
+                        <span class="quick-nav__icon">🔍</span>
+                        <span class="quick-nav__text">Focus Search</span>
+                        <span class="quick-nav__shortcut">Ctrl+K</span>
+                    </button>
+                    <button class="quick-nav__item" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                        <span class="quick-nav__icon">↑</span>
+                        <span class="quick-nav__text">Back to Top</span>
+                        <span class="quick-nav__shortcut">Alt+T</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
         </div>
     </div>
 
     <script src="script.js"></script>
+    <script src="navigation.js"></script>
 </body>
 </html>
 

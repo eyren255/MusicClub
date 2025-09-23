@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="icon" href="MusicClubLogo.PNG" type="image/png">
     <link rel="apple-touch-icon" href="MusicClubLogo.PNG">
-    <link rel="stylesheet" href="styles.css?v=4">
+    <link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
     <div class="bg-soft" aria-hidden="true"></div>
@@ -21,9 +21,23 @@
             <h1 class="app__title">Learn — Music Resources</h1>
         </div>
         <div class="app__controls">
-            <a class="btn btn--ghost" href="mainmenu.html" title="Home">Home</a>
+            <a class="btn btn--ghost" href="mainmenu.html" title="Home (Alt+H)">🏠 Home</a>
+            <button id="quickNavBtn" class="btn btn--ghost" title="Quick Navigation (Alt+Q)" aria-label="Quick Navigation">⚡</button>
         </div>
     </header>
+    
+    <!-- Breadcrumb Navigation -->
+    <nav class="breadcrumb" aria-label="You are here">
+        <ol class="breadcrumb__list">
+            <li class="breadcrumb__item">
+                <a href="mainmenu.html" class="breadcrumb__link">🏠 Home</a>
+            </li>
+            <li class="breadcrumb__separator" aria-hidden="true">›</li>
+            <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">
+                <span class="breadcrumb__link">📚 Learn</span>
+            </li>
+        </ol>
+    </nav>
 
     <main class="home" style="max-width:1000px;margin:0 auto">
         <section class="home__hero">
@@ -70,6 +84,40 @@
         <div class="credit">Website made by <strong>Shin Myat Tun</strong></div>
         <div class="muted">Music Club</div>
     </footer>
+    
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="back-to-top" title="Back to top (Alt+T)" aria-label="Back to top" hidden>
+        <span class="back-to-top__icon">↑</span>
+    </button>
+    
+    <!-- Quick Navigation Menu -->
+    <div id="quickNavMenu" class="quick-nav" hidden role="dialog" aria-labelledby="quickNavTitle">
+        <div class="quick-nav__panel">
+            <div class="quick-nav__header">
+                <h3 id="quickNavTitle">Quick Navigation</h3>
+                <button id="quickNavClose" class="btn btn--ghost small" aria-label="Close">✕</button>
+            </div>
+            <div class="quick-nav__content">
+                <a href="mainmenu.html" class="quick-nav__item">
+                    <span class="quick-nav__icon">🏠</span>
+                    <span class="quick-nav__text">Home</span>
+                    <span class="quick-nav__shortcut">Alt+H</span>
+                </a>
+                <a href="app.html" class="quick-nav__item">
+                    <span class="quick-nav__icon">🎵</span>
+                    <span class="quick-nav__text">Browse Songs</span>
+                    <span class="quick-nav__shortcut">Ctrl+1</span>
+                </a>
+                <button class="quick-nav__item" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                    <span class="quick-nav__icon">↑</span>
+                    <span class="quick-nav__text">Back to Top</span>
+                    <span class="quick-nav__shortcut">Alt+T</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="navigation.js"></script>
 </body>
 </html>
 
