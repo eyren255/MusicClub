@@ -337,8 +337,14 @@
 			const isOpen = elements.listPanel.classList.toggle("is-open");
 			elements.toggleList.setAttribute("aria-expanded", String(isOpen));
 			if(isOpen){
-				// Focus search shortly after open for mobile keyboards
-				setTimeout(() => elements.search.focus(), 50);
+				// Focus search and scroll list into view on mobile
+				setTimeout(() => {
+					elements.search.focus();
+					elements.listPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+				}, 50);
+			} else {
+				// If just closed, still bring user toward the list area
+				elements.listPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 			}
 		});
         // Tabs
