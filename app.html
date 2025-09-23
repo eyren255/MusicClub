@@ -32,6 +32,7 @@
             <button id="favToggle" class="btn btn--ghost" title="Favorite">♡</button>
             <button id="randomBtn" class="btn btn--ghost" title="Random song">Random</button>
             <button id="shareBtn" class="btn" title="Share link">Share</button>
+            <button id="helpBtn" class="btn btn--ghost" title="Shortcuts">?</button>
         </div>
 
         <main class="app__main">
@@ -66,6 +67,29 @@
                 </div>
             </section>
         </main>
+
+        <!-- Toast notifications -->
+        <div id="toast" class="toast" hidden></div>
+
+        <!-- Help overlay -->
+        <div id="helpOverlay" class="help" hidden role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+            <div class="help__panel">
+                <div class="help__header">
+                    <h3 id="helpTitle">Shortcuts</h3>
+                    <button id="helpClose" class="btn btn--ghost small" aria-label="Close">✕</button>
+                </div>
+                <div class="help__content">
+                    <ul>
+                        <li>↑ / ↓ — Move selection</li>
+                        <li>← / → — Previous / Next</li>
+                        <li>R — Random song</li>
+                        <li>S — Share link</li>
+                        <li>Ctrl/Cmd + K — Focus search</li>
+                        <li>Enter — Open selected</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
         
 

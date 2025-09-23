@@ -300,6 +300,13 @@
 		const clearBtn = document.getElementById('clearSearch');
 		if(clearBtn){ clearBtn.addEventListener('click', () => { elements.search.value=''; applySearchFilter(); elements.search.focus(); }); }
 		document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ elements.search.value=''; applySearchFilter(); elements.search.focus(); }});
+		// Help overlay
+		const helpBtn = document.getElementById('helpBtn');
+		const help = document.getElementById('helpOverlay');
+		const helpClose = document.getElementById('helpClose');
+		helpBtn?.addEventListener('click', ()=>{ help.hidden = false; });
+		helpClose?.addEventListener('click', ()=>{ help.hidden = true; });
+		document.addEventListener('keydown', (e)=>{ if(e.key==='?' || (e.key.toLowerCase()==='/' && (e.shiftKey))){ help.hidden=false; }});
         // URL params to preset collection/tab/open list/focus search and song select
 		try{
 			const params = new URLSearchParams(location.search);
@@ -350,15 +357,14 @@
             const r = Math.floor(Math.random() * songs.length);
             selectIndex(r);
         });
-        elements.shareBtn?.addEventListener('click', async () => {
+			elements.shareBtn?.addEventListener('click', async () => {
             const url = buildSongUrl();
             try{
                 if(navigator.share){
                     await navigator.share({ title: 'Music Club', url });
                 }else{
                     await navigator.clipboard.writeText(url);
-                    elements.shareBtn.textContent = 'Copied';
-                    setTimeout(()=> elements.shareBtn.textContent = 'Share', 1200);
+						showToast('Link copied');
                 }
             }catch(_){
                 try{ await navigator.clipboard.writeText(url); }catch(_e){}
@@ -442,6 +448,15 @@ function applyZoom(){ /* disabled */ }
         params.set('collection', currentCollection);
         params.set('song', String(currentIndex + 1));
         return `${base}?${params.toString()}`;
+    }
+
+    function showToast(message){
+        const t = document.getElementById('toast');
+        if(!t) return;
+        t.textContent = message;
+        t.hidden = false;
+        clearTimeout(showToast._tid);
+        showToast._tid = setTimeout(()=>{ t.hidden = true; }, 1400);
     }
 
     // Settings drawer removed
