@@ -49,6 +49,14 @@
             <button id="quickNavBtn" class="btn btn--ghost" title="Quick Navigation (Alt+Q)">⚡</button>
         </div>
 
+        <!-- Image Controls Toolbar -->
+        <div class="image-controls">
+            <button id="zoomInBtn" class="btn btn--small btn--ghost" title="Zoom In (+)">🔍+</button>
+            <button id="zoomOutBtn" class="btn btn--small btn--ghost" title="Zoom Out (-)">🔍-</button>
+            <button id="resetZoomBtn" class="btn btn--small btn--ghost" title="Reset Zoom (0)">↻</button>
+            <button id="fullscreenBtn" class="btn btn--small btn--ghost" title="Fullscreen (F11)">⛶</button>
+        </div>
+
         <main class="app__main">
             <aside id="songListPanel" class="sidebar" aria-label="Song list">
                 <div class="sidebar__search">
@@ -69,10 +77,17 @@
 
             <section class="viewer" aria-live="polite">
                 <div class="viewer__image-wrap">
+                    <div class="image-loading-overlay" id="imageLoadingOverlay" hidden>
+                        <div class="loading-spinner"></div>
+                        <div class="loading-text">Loading...</div>
+                    </div>
                     <img id="songImage" alt="Selected song cover" />
                     <div id="imageFallback" class="viewer__fallback" hidden>
                         <div class="fallback__emoji">🎵</div>
                         <div class="fallback__text">No image available</div>
+                    </div>
+                    <div class="zoom-indicator" id="zoomIndicator" hidden>
+                        <span id="zoomLevel">100%</span>
                     </div>
                 </div>
                 <div class="viewer__meta">
