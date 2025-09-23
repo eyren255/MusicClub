@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#142017">
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#142017">
     <title>Song Selector </title>
@@ -60,8 +60,30 @@
         <main class="app__main">
             <aside id="songListPanel" class="sidebar" aria-label="Song list">
                 <div class="sidebar__search">
-                    <input id="searchInput" type="search" placeholder="Search songs or number…" aria-label="Search songs or number">
-                    <button id="clearSearch" class="btn btn--ghost small" aria-label="Clear search">✕</button>
+                    <div class="search-input-wrapper">
+                        <input id="searchInput" type="search" placeholder="Search songs or number…" aria-label="Search songs or number">
+                        <button id="clearSearch" class="btn btn--ghost small" aria-label="Clear search">✕</button>
+                        <div id="searchResults" class="search-results-counter" hidden>
+                            <span id="searchCount">0 results</span>
+                        </div>
+                    </div>
+                    <div class="search-options">
+                        <button id="searchOptionsBtn" class="btn btn--ghost btn--small" title="Search Options">⚙️</button>
+                        <div id="searchOptionsPanel" class="search-options-panel" hidden>
+                            <label class="search-option">
+                                <input type="checkbox" id="fuzzySearch" checked>
+                                <span>Fuzzy matching</span>
+                            </label>
+                            <label class="search-option">
+                                <input type="checkbox" id="searchInFavorites">
+                                <span>Search in favorites only</span>
+                            </label>
+                            <label class="search-option">
+                                <input type="checkbox" id="caseSensitive">
+                                <span>Case sensitive</span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
                 <div class="sidebar__tabs" role="tablist" aria-label="Collections">
                     <button id="colMusicList" class="tab" role="tab" aria-selected="false">Music Club Song List</button>

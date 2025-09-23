@@ -170,9 +170,14 @@
                         li.className = "song-item" + (songIndex === currentIndex ? " active" : "");
                         li.setAttribute("data-index", String(songIndex));
             const isFav = favorites.includes(songIndex);
+                        // Highlight search matches in title
+                        const searchQuery = elements.search.value.trim();
+                        const caseSensitive = document.getElementById('caseSensitive')?.checked ?? false;
+                        const highlightedTitle = searchQuery ? highlightMatches(title, searchQuery, caseSensitive) : escapeHtml(title);
+                        
                         li.innerHTML = `
                                 <span class="song-index">${songIndex + 1}</span>
-                                <span class="song-title" title="${escapeHtml(title)}">${escapeHtml(title)}</span>
+                                <span class="song-title" title="${escapeHtml(title)}">${highlightedTitle}</span>
                                 ${isFav ? '<span class="badge">❤</span>' : ''}
                         `;
                         li.addEventListener("click", () => selectIndex(songIndex));
@@ -272,20 +277,113 @@
                 }
         }
 
+        // Enhanced search with fuzzy matching
+        function fuzzyMatch(text, query) {
+            if (!query) return { match: true, score: 1 };
+            if (!text) return { match: false, score: 0 };
+            
+            const textLower = text.toLowerCase();
+            const queryLower = query.toLowerCase();
+            
+            // Exact match gets highest score
+            if (textLower.includes(queryLower)) {
+                return { match: true, score: 0.9 };
+            }
+            
+            // Fuzzy matching algorithm
+            let score = 0;
+            let queryIndex = 0;
+            let consecutiveMatches = 0;
+            
+            for (let i = 0; i < textLower.length && queryIndex < queryLower.length; i++) {
+                if (textLower[i] === queryLower[queryIndex]) {
+                    queryIndex++;
+                    consecutiveMatches++;
+                    score += consecutiveMatches * 0.1; // Bonus for consecutive matches
+                } else {
+                    consecutiveMatches = 0;
+                }
+            }
+            
+            // Calculate final score
+            const completionRatio = queryIndex / queryLower.length;
+            const finalScore = completionRatio * (score + 0.3);
+            
+            return {
+                match: completionRatio > 0.6, // At least 60% of query characters must match
+                score: finalScore
+            };
+        }
+
+        function highlightMatches(text, query) {
+            if (!query || !text) return text;
+            
+            const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+            return escapeHtml(text).replace(regex, '<span class="search-match-highlight">$1</span>');
+        }
+
         function applySearchFilter(){
                 const qRaw = elements.search.value || "";
                 const q = qRaw.toLowerCase();
                 const qDigits = q.replace(/[^0-9]/g, "");
+                
+                // Get search options
+                const useFuzzySearch = document.getElementById('fuzzySearch')?.checked ?? true;
+                const searchInFavoritesOnly = document.getElementById('searchInFavorites')?.checked ?? false;
+                const caseSensitive = document.getElementById('caseSensitive')?.checked ?? false;
+                
         const songs = getSongs();
-        filteredIndexes = songs
+        const searchResults = songs
                         .map((title, i) => ({ title, i }))
                         .filter(x => {
-                                const matchesTitle = x.title.toLowerCase().includes(q);
-                                const indexStr = String(x.i + 1);
-                                const matchesNumber = qDigits.length > 0 && indexStr.startsWith(qDigits);
-                                return matchesTitle || matchesNumber || q.length === 0;
+                            // Filter by favorites if option is enabled
+                            if (searchInFavoritesOnly && !getFavorites().includes(x.i)) {
+                                return false;
+                            }
+                            
+                            if (q.length === 0) return true;
+                            
+                            const searchTitle = caseSensitive ? x.title : x.title.toLowerCase();
+                            const searchQuery = caseSensitive ? qRaw : q;
+                            
+                            // Number matching
+                            const indexStr = String(x.i + 1);
+                            const matchesNumber = qDigits.length > 0 && indexStr.startsWith(qDigits);
+                            
+                            if (matchesNumber) return true;
+                            
+                            // Text matching with case sensitivity support
+                            if (useFuzzySearch) {
+                                const fuzzyResult = caseSensitive ? 
+                                    fuzzyMatch(x.title, qRaw) : 
+                                    fuzzyMatch(searchTitle, searchQuery);
+                                return fuzzyResult.match;
+                            } else {
+                                return searchTitle.includes(searchQuery);
+                            }
                         })
-                        .map(x => x.i);
+                        .sort((a, b) => {
+                            if (q.length === 0) return 0;
+                            
+                            // Sort by relevance when using fuzzy search
+                            if (useFuzzySearch) {
+                                const searchTitle = caseSensitive ? a.title : a.title.toLowerCase();
+                                const searchQuery = caseSensitive ? qRaw : q;
+                                const scoreA = fuzzyMatch(searchTitle, searchQuery).score;
+                                
+                                const searchTitleB = caseSensitive ? b.title : b.title.toLowerCase();
+                                const scoreB = fuzzyMatch(searchTitleB, searchQuery).score;
+                                
+                                return scoreB - scoreA; // Higher score first
+                            }
+                            return 0;
+                        });
+                        
+        filteredIndexes = searchResults.map(x => x.i);
+        
+        // Update search results counter
+        updateSearchResultsCounter(filteredIndexes.length, songs.length);
+        
                 // Keep currentIndex if still visible; else snap to first visible
                 if(!filteredIndexes.includes(currentIndex)){
                         currentIndex = filteredIndexes.length ? filteredIndexes[0] : 0;
@@ -293,6 +391,19 @@
                 renderList();
                 updateMeta();
                 loadImageForCurrent();
+        }
+
+        function updateSearchResultsCounter(resultsCount, totalCount) {
+            const counter = document.getElementById('searchResults');
+            const countSpan = document.getElementById('searchCount');
+            
+            if (elements.search.value.trim() === '') {
+                counter.hidden = true;
+                return;
+            }
+            
+            counter.hidden = false;
+            countSpan.textContent = `${resultsCount} of ${totalCount}`;
         }
 
         // Wire events
@@ -321,6 +432,31 @@
                 const clearBtn = document.getElementById('clearSearch');
                 if(clearBtn){ clearBtn.addEventListener('click', () => { elements.search.value=''; applySearchFilter(); elements.search.focus(); }); }
                 document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ elements.search.value=''; applySearchFilter(); elements.search.focus(); }});
+                
+                // Search options panel
+                const searchOptionsBtn = document.getElementById('searchOptionsBtn');
+                const searchOptionsPanel = document.getElementById('searchOptionsPanel');
+                
+                if(searchOptionsBtn && searchOptionsPanel){
+                    searchOptionsBtn.addEventListener('click', () => {
+                        searchOptionsPanel.hidden = !searchOptionsPanel.hidden;
+                    });
+                    
+                    // Close options panel when clicking outside
+                    document.addEventListener('click', (e) => {
+                        if (!searchOptionsBtn.contains(e.target) && !searchOptionsPanel.contains(e.target)) {
+                            searchOptionsPanel.hidden = true;
+                        }
+                    });
+                    
+                    // Re-apply search when options change
+                    ['fuzzySearch', 'searchInFavorites', 'caseSensitive'].forEach(id => {
+                        const checkbox = document.getElementById(id);
+                        if (checkbox) {
+                            checkbox.addEventListener('change', applySearchFilter);
+                        }
+                    });
+                }
                 // Help overlay
                 const helpBtn = document.getElementById('helpBtn');
                 const help = document.getElementById('helpOverlay');
@@ -432,28 +568,142 @@
             }
         }, { passive: false });
 
-        // Touch swipe navigation
+        // Enhanced mobile touch gestures
         let touchStartX = null;
         let touchStartY = null;
+        let touchStartTime = null;
+        let lastTapTime = 0;
+        let isPinching = false;
+        let initialPinchDistance = 0;
+        
         function onTouchStart(e){
-                if(!e.touches || e.touches.length !== 1) return;
-                touchStartX = e.touches[0].clientX;
-                touchStartY = e.touches[0].clientY;
-        }
-        function onTouchEnd(e){
-                if(touchStartX == null || touchStartY == null) return;
-                const dx = (e.changedTouches && e.changedTouches[0].clientX || 0) - touchStartX;
-                const dy = (e.changedTouches && e.changedTouches[0].clientY || 0) - touchStartY;
-                const absX = Math.abs(dx);
-                const absY = Math.abs(dy);
-                if(absX > 40 && absX > absY){
-                        if(dx < 0) selectNext(); else selectPrev();
+                const touches = e.touches;
+                if(!touches) return;
+                
+                touchStartTime = Date.now();
+                
+                // Handle single touch
+                if(touches.length === 1){
+                    touchStartX = touches[0].clientX;
+                    touchStartY = touches[0].clientY;
                 }
-                touchStartX = touchStartY = null;
+                
+                // Handle pinch gesture
+                if(touches.length === 2){
+                    isPinching = true;
+                    const dx = touches[0].clientX - touches[1].clientX;
+                    const dy = touches[0].clientY - touches[1].clientY;
+                    initialPinchDistance = Math.sqrt(dx * dx + dy * dy);
+                }
         }
+        
+        function onTouchMove(e){
+                if(isPinching && e.touches.length === 2){
+                    e.preventDefault();
+                    const touches = e.touches;
+                    const dx = touches[0].clientX - touches[1].clientX;
+                    const dy = touches[0].clientY - touches[1].clientY;
+                    const currentDistance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if(initialPinchDistance > 0){
+                        const scale = currentDistance / initialPinchDistance;
+                        const newZoom = currentZoom * scale;
+                        applyZoom(Math.max(0.5, Math.min(3, newZoom)));
+                        initialPinchDistance = currentDistance;
+                    }
+                }
+        }
+        
+        function onTouchEnd(e){
+                if(!touchStartX || !touchStartY || !touchStartTime) return;
+                
+                isPinching = false;
+                
+                const touchEndTime = Date.now();
+                const touchDuration = touchEndTime - touchStartTime;
+                
+                // Handle tap gestures
+                if(touchDuration < 300 && e.changedTouches && e.changedTouches[0]){
+                    const endTouch = e.changedTouches[0];
+                    const moveDistance = Math.sqrt(
+                        Math.pow(endTouch.clientX - touchStartX, 2) + 
+                        Math.pow(endTouch.clientY - touchStartY, 2)
+                    );
+                    
+                    // Double tap to zoom
+                    if(moveDistance < 10){
+                        const now = Date.now();
+                        if(now - lastTapTime < 300){
+                            if(currentZoom === 1){
+                                applyZoom(2);
+                            } else {
+                                resetZoom();
+                            }
+                            lastTapTime = 0;
+                            touchStartX = touchStartY = null;
+                            return;
+                        }
+                        lastTapTime = now;
+                    }
+                }
+                
+                // Handle swipe gestures
+                if(e.changedTouches && e.changedTouches[0] && touchDuration > 50){
+                    const dx = e.changedTouches[0].clientX - touchStartX;
+                    const dy = e.changedTouches[0].clientY - touchStartY;
+                    const absX = Math.abs(dx);
+                    const absY = Math.abs(dy);
+                    
+                    // Improved swipe detection with velocity consideration
+                    const velocity = absX / touchDuration;
+                    const minSwipeDistance = 50;
+                    const minVelocity = 0.1;
+                    
+                    if(absX > minSwipeDistance && absX > absY * 1.5 && velocity > minVelocity){
+                        // Provide visual feedback
+                        const viewer = document.querySelector('.viewer');
+                        viewer.style.transform = dx > 0 ? 'translateX(5px)' : 'translateX(-5px)';
+                        setTimeout(() => { viewer.style.transform = ''; }, 150);
+                        
+                        // Navigate
+                        if(dx < 0) {
+                            selectNext();
+                            showToast('Next song', 'info');
+                        } else {
+                            selectPrev(); 
+                            showToast('Previous song', 'info');
+                        }
+                    }
+                }
+                
+                touchStartX = touchStartY = touchStartTime = null;
+        }
+        
+        // Enhanced mobile keyboard handling
+        function handleMobileKeyboard(){
+            const searchInput = elements.search;
+            
+            // Prevent zoom on focus (iOS)
+            searchInput.addEventListener('focus', () => {
+                const viewport = document.querySelector('meta[name="viewport"]');
+                viewport.content = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no';
+            });
+            
+            searchInput.addEventListener('blur', () => {
+                const viewport = document.querySelector('meta[name="viewport"]');
+                viewport.content = 'width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no';
+            });
+        }
+        
+        // Initialize mobile enhancements
+        if('ontouchstart' in window){
+            handleMobileKeyboard();
+        }
+        
         // Attach to viewer area for better UX
         const touchViewer = document.querySelector(".viewer__image-wrap");
-        touchViewer.addEventListener("touchstart", onTouchStart, {passive:true});
+        touchViewer.addEventListener("touchstart", onTouchStart, {passive:false});
+        touchViewer.addEventListener("touchmove", onTouchMove, {passive:false});
         touchViewer.addEventListener("touchend", onTouchEnd, {passive:true});
     // Remove mobile zoom gestures
 
