@@ -68,12 +68,39 @@ body{
 @keyframes eqPulse{0%{transform:scaleY(.45);opacity:.85}50%{transform:scaleY(1.1);opacity:1}100%{transform:scaleY(.6);opacity:.9}}
 @-webkit-keyframes eqPulse{0%{-webkit-transform:scaleY(.45);opacity:.85}50%{-webkit-transform:scaleY(1.1);opacity:1}100%{-webkit-transform:scaleY(.6);opacity:.9}}
 .card:hover{transform:translateY(-2px) scale(1.02)}
-.card{display:flex;flex-direction:column;justify-content:flex-start;gap:6px;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--panel);text-decoration:none;color:var(--text);transition:transform .12s ease, background .12s ease;animation:slideUp .25s ease;height:100%}
+.card{display:flex;flex-direction:column;justify-content:flex-start;gap:6px;padding:14px;border:1px solid var(--border);border-radius:14px;background:var(--panel);text-decoration:none;color:var(--text);transition:transform .18s ease, background .18s ease, box-shadow .18s ease;animation:slideUp .25s ease;height:100%;position:relative;overflow:hidden;transform-style:preserve-3d}
+.card:hover{transform:perspective(700px) translateY(-2px) rotateX(1.2deg) rotateY(.8deg);box-shadow:0 10px 24px rgba(0,0,0,.35)}
+.card:active{transform:perspective(700px) scale(.99)}
+/* gradient border sweep */
+.card::before{content:"";position:absolute;inset:0;border-radius:14px;padding:1px;background:linear-gradient(120deg, rgba(58,168,86,.0), rgba(58,168,86,.35), rgba(58,168,86,.0));-webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.0;transition:opacity .2s ease}
+.card:hover::before{opacity:.9}
+/* ripple for cards */
+.card::after{content:"";position:absolute;left:50%;top:50%;width:0;height:0;border-radius:50%;background:rgba(255,255,255,.15);transform:translate(-50%,-50%) scale(0);transition:transform .45s ease, opacity .6s ease;pointer-events:none}
+.card:active::after{width:220%;height:220%;transform:translate(-50%,-50%) scale(1);opacity:0}
 .card:hover{transform:translateY(-2px);background:#15261a}
 .card__icon{font-size:28px;margin-bottom:8px}
 .card__title{font-weight:600;margin-bottom:4px}
 .card__desc{font-size:14px}
 /* auto-fit handles responsive columns; keep a minimum card width */
+
+/* staggered entrance for cards */
+.home__grid .card{animation:slideUp .35s ease both}
+.home__grid .card:nth-child(1){animation-delay:.02s}
+.home__grid .card:nth-child(2){animation-delay:.06s}
+.home__grid .card:nth-child(3){animation-delay:.10s}
+.home__grid .card:nth-child(4){animation-delay:.14s}
+.home__grid .card:nth-child(5){animation-delay:.18s}
+.home__grid .card:nth-child(6){animation-delay:.22s}
+
+/* soft ambient background */
+.bg-soft{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(800px 400px at 10% 10%, rgba(58,168,86,.08), transparent), radial-gradient(900px 500px at 90% 90%, rgba(58,168,86,.06), transparent);animation:bgDrift 26s ease-in-out infinite alternate}
+@keyframes bgDrift{from{background-position:0 0, 0 0}to{background-position:30px -20px, -20px 30px}}
+@-webkit-keyframes bgDrift{from{background-position:0 0, 0 0}to{background-position:30px -20px, -20px 30px}}
+
+@media (prefers-reduced-motion: reduce){
+  .home__grid .card{animation:none}
+  .bg-soft{animation:none}
+}
 .app__header{
     display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
     gap:12px;
