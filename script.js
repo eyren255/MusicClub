@@ -205,6 +205,10 @@
                 elements.fallback.hidden = true;
                 elements.image.hidden = false;
                 
+                // Clear ready states before loading new image
+                elements.next.classList.remove('ready');
+                elements.prev.classList.remove('ready');
+                
                 if(!src){
                         showFallback();
                         hideLoadingOverlay();
@@ -224,19 +228,67 @@
                 elements.image.classList.remove('is-loaded');
                 elements.image.classList.add('is-loading');
                 elements.image.src = src + `?v=${encodeURIComponent(src.length)}`; // cache-bust lightly
-        // Preload neighbors
-        try{
-            const songs = getSongs();
-            const nextIdx = Math.min(songs.length - 1, currentIndex + 1);
-            const prevIdx = Math.max(0, currentIndex - 1);
-            [nextIdx, prevIdx].forEach(i => {
-                const t = songs[i];
-                const p = filenameByTitle[t];
-                if(p){ const im = new Image(); im.src = p; }
-            });
-        }catch(_){ }
+        // Enhanced preloading system
+        preloadAdjacentImages();
+                // Update navigation state after preloading starts
+                setTimeout(() => updateNavigationState(), 100);
                 // Reset zoom when loading new image
                 applyZoom(1, true);
+        }
+
+        // Enhanced image preloading system
+        const imageCache = new Map();
+        
+        function preloadAdjacentImages() {
+                const songs = getSongs();
+                const indices = [-2, -1, 1, 2]; // Preload 2 images in each direction
+                
+                indices.forEach(offset => {
+                        const targetIndex = (currentIndex + offset + songs.length) % songs.length;
+                        const title = songs[targetIndex];
+                        const src = filenameByTitle[title];
+                        
+                        if (src && !imageCache.has(src)) {
+                                const img = new Image();
+                                img.onload = () => {
+                                        imageCache.set(src, img);
+                                        // Subtle visual feedback for loaded images
+                                        if (Math.abs(offset) === 1) {
+                                                updateNavigationState();
+                                        }
+                                };
+                                img.onerror = () => {
+                                        console.warn(`Failed to preload image: ${src}`);
+                                };
+                                img.src = src + `?v=${encodeURIComponent(src.length)}`;
+                        }
+                });
+                
+                // Keep cache size reasonable
+                if (imageCache.size > 12) {
+                        const entries = Array.from(imageCache.entries());
+                        entries.slice(0, 6).forEach(([key]) => imageCache.delete(key));
+                        // Update navigation state after cache cleanup
+                        setTimeout(() => updateNavigationState(), 50);
+                }
+        }
+        
+        function updateNavigationState() {
+                const songs = getSongs();
+                const nextSrc = filenameByTitle[songs[(currentIndex + 1) % songs.length]];
+                const prevSrc = filenameByTitle[songs[(currentIndex - 1 + songs.length) % songs.length]];
+                
+                // Clear previous ready states first
+                elements.next.classList.remove('ready');
+                elements.prev.classList.remove('ready');
+                
+                // Add ready state only if images are currently cached
+                if (nextSrc && imageCache.has(nextSrc)) {
+                        elements.next.classList.add('ready');
+                }
+                if (prevSrc && imageCache.has(prevSrc)) {
+                        elements.prev.classList.add('ready');
+                }
         }
 
         function showFallback(){
