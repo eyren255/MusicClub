@@ -57,7 +57,7 @@
 		"လရိပ်": "Sa Yar Ga Toe Pwell/လရိပ်.png",
 		"မမ": "Sa Yar Ga Toe Pwell/မမ.png",
 		"ကျေးဇူးပါကွယ်": "Sa Yar Ga Toe Pwell/ကျေးဇူးပါကွယ်.png",
-		"နားလည်ပါ": "Sa Yar Ga Toe Pwell/နားလည်ပါ.png",
+		"နားလည်ပါ": "Sa Yar Ga Toe Pwell/နားလည်ပါ.jpg",
 		"ငယ်ချစ်ပုံပြင်": "Sa Yar Ga Toe Pwell/ငယ်ချစ်ပုံပြင်.png",
 		"ချစ်တာတစ်ခုထဲသိတယ်": "Sa Yar Ga Toe Pwell/ချစ်တာတစ်ခုထဲသိတယ်.png",
 		"မြေနီလမ်း": "Sa Yar Ga Toe Pwell/မြေနီလမ်း.png",
