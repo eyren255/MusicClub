@@ -107,7 +107,9 @@
 		zoomOutBtn: document.getElementById("zoomOutBtn"),
 		zoomResetBtn: document.getElementById("zoomResetBtn"),
         colMusicList: document.getElementById("colMusicList"),
-        colSaYar: document.getElementById("colSaYar")
+        colSaYar: document.getElementById("colSaYar"),
+        randomBtn: document.getElementById('randomBtn'),
+        shareBtn: document.getElementById('shareBtn')
 	};
 
     let currentIndex = 0; // 0-based
@@ -341,6 +343,27 @@
 		elements.colSaYar.addEventListener('click', () => setCollection('Sa Yar Ga Toe Pwell'));
         // Favorites toggle
 		elements.favToggle.addEventListener('click', toggleFavorite);
+        // Random & Share
+        elements.randomBtn?.addEventListener('click', () => {
+            const songs = getSongs();
+            if(!songs.length) return;
+            const r = Math.floor(Math.random() * songs.length);
+            selectIndex(r);
+        });
+        elements.shareBtn?.addEventListener('click', async () => {
+            const url = buildSongUrl();
+            try{
+                if(navigator.share){
+                    await navigator.share({ title: 'Music Club', url });
+                }else{
+                    await navigator.clipboard.writeText(url);
+                    elements.shareBtn.textContent = 'Copied';
+                    setTimeout(()=> elements.shareBtn.textContent = 'Share', 1200);
+                }
+            }catch(_){
+                try{ await navigator.clipboard.writeText(url); }catch(_e){}
+            }
+        });
         // Remove zoom/fullscreen logic per request (keep favorite only)
 
 	// Touch swipe navigation
@@ -412,6 +435,14 @@ function applyZoom(){ /* disabled */ }
 	}
 
     // removed 'new' feature
+
+    function buildSongUrl(){
+        const base = location.origin + location.pathname.replace(/[^\/]*$/, '') + 'app.html';
+        const params = new URLSearchParams();
+        params.set('collection', currentCollection);
+        params.set('song', String(currentIndex + 1));
+        return `${base}?${params.toString()}`;
+    }
 
     // Settings drawer removed
 
