@@ -101,7 +101,6 @@
 		tabAll: document.getElementById("tabAll"),
 		tabFav: document.getElementById("tabFav"),
         tabRecent: document.getElementById("tabRecent"),
-        tabNew: document.getElementById("tabNew"),
 		favToggle: document.getElementById("favToggle"),
 		fsToggle: document.getElementById("fsToggle"),
 		zoomInBtn: document.getElementById("zoomInBtn"),
@@ -116,7 +115,6 @@
     let favoritesByCollection = loadJson('favoritesByCollection', {});
     let recentByCollection = loadJson('recentByCollection', {});
     let activeTab = loadJson('activeTab', 'all');
-    const NEW_WINDOW_DAYS = 7;
     currentCollection = loadJson('lastCollection', currentCollection);
 	let zoomScale = 1;
 
@@ -148,10 +146,8 @@
         let sourceIndexes = filteredIndexes;
         const favorites = getFavorites();
         const recent = getRecent();
-        const newSet = getNewIndexes();
         if(activeTab === 'fav') sourceIndexes = sourceIndexes.filter(i => favorites.includes(i));
         if(activeTab === 'recent') sourceIndexes = sourceIndexes.filter(i => recent.includes(i));
-        if(activeTab === 'new') sourceIndexes = sourceIndexes.filter(i => newSet.has(i));
         if(songs.length === 0){
             const div = document.createElement('div');
             div.className = 'empty-state';
@@ -172,12 +168,10 @@
 			li.className = "song-item" + (songIndex === currentIndex ? " active" : "");
 			li.setAttribute("data-index", String(songIndex));
             const isFav = favorites.includes(songIndex);
-            const isNew = newSet.has(songIndex);
 			li.innerHTML = `
 				<span class="song-index">${songIndex + 1}</span>
 				<span class="song-title" title="${escapeHtml(title)}">${escapeHtml(title)}</span>
 				${isFav ? '<span class="badge">❤</span>' : ''}
-                ${isNew ? '<span class="badge-new">New</span>' : ''}
 			`;
 			li.addEventListener("click", () => selectIndex(songIndex));
 			elements.list.appendChild(li);
@@ -342,7 +336,6 @@
 		elements.tabAll.addEventListener('click', () => setTab('all'));
 		elements.tabFav.addEventListener('click', () => setTab('fav'));
 		elements.tabRecent.addEventListener('click', () => setTab('recent'));
-        elements.tabNew.addEventListener('click', () => setTab('new'));
 		// Collection tabs
 		elements.colMusicList.addEventListener('click', () => setCollection('Music Club Song List'));
 		elements.colSaYar.addEventListener('click', () => setCollection('Sa Yar Ga Toe Pwell'));
@@ -398,11 +391,10 @@ function applyZoom(){ /* disabled */ }
 	function setTab(tab){
 		activeTab = tab;
         saveJson('activeTab', activeTab);
-        [elements.tabAll, elements.tabFav, elements.tabRecent, elements.tabNew].forEach(btn => { btn.classList.remove('is-active'); btn.removeAttribute('aria-current'); });
+        [elements.tabAll, elements.tabFav, elements.tabRecent].forEach(btn => { btn.classList.remove('is-active'); btn.removeAttribute('aria-current'); });
 		if(tab === 'all'){ elements.tabAll.classList.add('is-active'); elements.tabAll.setAttribute('aria-current','true'); }
 		if(tab === 'fav'){ elements.tabFav.classList.add('is-active'); elements.tabFav.setAttribute('aria-current','true'); }
         if(tab === 'recent'){ elements.tabRecent.classList.add('is-active'); elements.tabRecent.setAttribute('aria-current','true'); }
-        if(tab === 'new'){ elements.tabNew.classList.add('is-active'); elements.tabNew.setAttribute('aria-current','true'); }
 		renderList();
 	}
 
@@ -419,20 +411,7 @@ function applyZoom(){ /* disabled */ }
 		loadImageForCurrent();
 	}
 
-    function getNewIndexes(){
-        // New = songs appended recently; approximate by first-seen timestamp per title
-        const now = Date.now();
-        const seen = loadJson('seenTimestamps', {});
-        const songs = getSongs();
-        const indexes = new Set();
-        songs.forEach((title, i) => {
-            if(!seen[title]){ seen[title] = now; }
-            const ageDays = (now - seen[title]) / (1000*60*60*24);
-            if(ageDays <= NEW_WINDOW_DAYS) indexes.add(i);
-        });
-        saveJson('seenTimestamps', seen);
-        return indexes;
-    }
+    // removed 'new' feature
 
     // Settings drawer removed
 

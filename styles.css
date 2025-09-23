@@ -126,7 +126,7 @@ body{
 .song-item:active{transform:scale(.99)}
 .song-index{opacity:.7;width:28px;flex:0 0 auto;text-align:right}
 .song-title{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.badge-new{margin-left:6px;font-size:11px;color:#fff;background:#e67e22;border-radius:6px;padding:2px 6px}
+/* removed new badge */
 .sidebar__tabs{display:flex;gap:8px;padding:8px;border-bottom:1px solid var(--border);position:sticky;top:58px;background:var(--panel);z-index:1;flex-wrap:wrap}
 .tab{padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer}
 .tab.is-active{background:var(--primary);border-color:var(--primary);color:#fff}
