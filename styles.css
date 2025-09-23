@@ -557,7 +557,7 @@ body{
         /* Enhanced touch targets */
         min-height:80px;
     }
-    /* Enhanced mobile toolbar */
+    /* Enhanced mobile toolbar - auto-hide for better image viewing */
     .app__toolbar{
         position:sticky;
         top:68px;
@@ -567,6 +567,25 @@ body{
         box-shadow:0 8px 20px var(--shadow);
         /* Better mobile scrolling */
         -webkit-overflow-scrolling:touch;
+        /* Auto-hide animation */
+        transition:transform 0.3s ease, opacity 0.3s ease;
+        transform:translateY(0);
+        opacity:1;
+    }
+    
+    /* Hide toolbar when scrolling down on mobile */
+    .scrolling-down .app__toolbar{
+        transform:translateY(-100%);
+        opacity:0;
+        pointer-events:none;
+    }
+    
+    /* Show toolbar when scrolling up or when tapped */
+    .scrolling-up .app__toolbar,
+    .toolbar-visible .app__toolbar{
+        transform:translateY(0);
+        opacity:1;
+        pointer-events:auto;
     }
     .app__toolbar .btn--ghost{
         background:rgba(74, 191, 106, 0.08);
@@ -849,7 +868,7 @@ body{
     }
 }
 
-/* Enhanced Image Controls and Loading States */
+/* Enhanced Image Controls and Loading States - auto-hide for better image viewing */
 .image-controls{
     position:sticky;
     top:136px;
@@ -862,6 +881,44 @@ body{
     justify-content:center;
     backdrop-filter:blur(20px);
     box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    /* Auto-hide animation */
+    transition:transform 0.3s ease, opacity 0.3s ease;
+    transform:translateY(0);
+    opacity:1;
+}
+
+/* Hide image controls when scrolling down on mobile */
+@media (max-width: 768px) {
+    .scrolling-down .image-controls{
+        transform:translateY(-100%);
+        opacity:0;
+        pointer-events:none;
+    }
+    
+    /* Show image controls when scrolling up or when tapped */
+    .scrolling-up .image-controls,
+    .toolbar-visible .image-controls{
+        transform:translateY(0);
+        opacity:1;
+        pointer-events:auto;
+    }
+    
+    /* Add a tap area to show controls when image is tapped */
+    .viewer__image-wrap{
+        position:relative;
+    }
+    
+    .viewer__image-wrap::before{
+        content:'';
+        position:absolute;
+        top:0;
+        left:0;
+        right:0;
+        bottom:0;
+        z-index:1;
+        background:transparent;
+        cursor:pointer;
+    }
 }
 
 .btn--small{

@@ -929,6 +929,93 @@ function createToast() {
 
 function toggleFullscreen(){ /* disabled */ }
 
+        // Auto-hide toolbar functionality for mobile
+        let lastScrollTop = 0;
+        let scrollTimeout;
+        let isScrolling = false;
+        
+        function handleScrollDirection() {
+            if (window.innerWidth > 768) return; // Only apply on mobile devices
+            
+            const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const scrollDelta = Math.abs(currentScrollTop - lastScrollTop);
+            
+            // Only trigger if scroll is significant enough (prevents jitter)
+            if (scrollDelta < 5) return;
+            
+            isScrolling = true;
+            clearTimeout(scrollTimeout);
+            
+            // Remove previous scroll classes
+            document.body.classList.remove('scrolling-up', 'scrolling-down', 'toolbar-visible');
+            
+            if (currentScrollTop > lastScrollTop && currentScrollTop > 100) {
+                // Scrolling down - hide toolbars
+                document.body.classList.add('scrolling-down');
+            } else if (currentScrollTop < lastScrollTop) {
+                // Scrolling up - show toolbars
+                document.body.classList.add('scrolling-up');
+            }
+            
+            lastScrollTop = currentScrollTop;
+            
+            // Auto-show toolbars after scrolling stops
+            scrollTimeout = setTimeout(() => {
+                isScrolling = false;
+                document.body.classList.remove('scrolling-up', 'scrolling-down');
+                document.body.classList.add('toolbar-visible');
+                
+                // Hide again after 3 seconds if no interaction
+                setTimeout(() => {
+                    if (!isScrolling && window.pageYOffset > 100) {
+                        document.body.classList.remove('toolbar-visible');
+                        document.body.classList.add('scrolling-down');
+                    }
+                }, 3000);
+            }, 150);
+        }
+        
+        // Add scroll event listener with throttling
+        let ticking = false;
+        function requestTick() {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    handleScrollDirection();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }
+        
+        window.addEventListener('scroll', requestTick, { passive: true });
+        
+        // Show toolbars when user taps the image area
+        const imageWrap = document.querySelector('.viewer__image-wrap');
+        if (imageWrap) {
+            imageWrap.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768) {
+                    e.preventDefault();
+                    document.body.classList.remove('scrolling-up', 'scrolling-down');
+                    document.body.classList.add('toolbar-visible');
+                    
+                    // Hide again after 3 seconds
+                    setTimeout(() => {
+                        if (window.pageYOffset > 100) {
+                            document.body.classList.remove('toolbar-visible');
+                            document.body.classList.add('scrolling-down');
+                        }
+                    }, 3000);
+                }
+            });
+        }
+        
+        // Handle orientation change
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                lastScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            }, 100);
+        });
+
         // Initial render
                 renderList();
                 selectIndex(0);
