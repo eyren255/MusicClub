@@ -34,7 +34,9 @@
 		"ဆွေးတယ်",
 		"နွယ်နီ",
 		"သူငယ်ချင်း",
-		"မောင့်မျက်ရည်၀ိုင်း"
+		"မောင့်မျက်ရည်၀ိုင်း",
+		"နောက်ဆုံးရင်ခွင်",
+		"အချစ်မျက်ဝန်း"
 		],
 		"Music Club Song List": []
 	};
@@ -44,7 +46,7 @@
 	/** Map human-readable titles to image filenames in folder `Sa Yar Ga Toe Pwell` */
 	const filenameByTitle = {
 		"စတော်ဘယ်ရီချစ်သဲချင်": "Sa Yar Ga Toe Pwell/စတော်ဘယ်ရီချစ်သဲချင်.png",
-		"မြေပြန့်သူလေး": "Sa Yar Ga Toe Pwell/မြေပြန့်သူလေး.png",
+		"မြေပြန့်သူလေး": "Sa Yar Ga Toe Pwell/မြေပြန့်သူလေး.png",
 		"မျက်သွယ်": "Sa Yar Ga Toe Pwell/မျက်သွယ်.png",
 		"ရေစီကြောင်းလေး": "Sa Yar Ga Toe Pwell/ရေစီကြောင်းလေး.png",
 		"ဖက်ထားမယ်": "Sa Yar Ga Toe Pwell/ဖက်ထားမယ်.png",
@@ -73,7 +75,9 @@
 		"ဆွေးတယ်": "Sa Yar Ga Toe Pwell/ဆွေးတယ်.png",
 		"နွယ်နီ": "Sa Yar Ga Toe Pwell/နွယ်နီ.png",
 		"သူငယ်ချင်း": "Sa Yar Ga Toe Pwell/သူငယ်ချင်း.png",
-		"မောင့်မျက်ရည်၀ိုင်း": "Sa Yar Ga Toe Pwell/မောင့်မျက်ရည်၀ိုင်း.png"
+		"မောင့်မျက်ရည်၀ိုင်း": "Sa Yar Ga Toe Pwell/မောင့်မျက်ရည်၀ိုင်း.png",
+		"နောက်ဆုံးရင်ခွင်": "Sa Yar Ga Toe Pwell/နောက်ဆုံးရင်ခွင်.png",
+		"အချစ်မျက်ဝန်း": "Sa Yar Ga Toe Pwell/အချစ်မျက်ဝန်း.png"
 	};
 
     const elements = {
