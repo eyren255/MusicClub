@@ -336,6 +336,7 @@
 		elements.toggleList.addEventListener("click", function(){
 			const isOpen = elements.listPanel.classList.toggle("is-open");
 			elements.toggleList.setAttribute("aria-expanded", String(isOpen));
+			elements.toggleList.classList.toggle('is-on', isOpen);
 			if(isOpen){
 				// Focus search and scroll list into view on mobile
 				setTimeout(() => {
