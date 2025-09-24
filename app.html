@@ -37,24 +37,24 @@
             </ol>
         </nav>
 
-        <div class="app__toolbar">
-            <a href="mainmenu.html" class="btn btn--ghost" title="Home (Alt+H)">🏠 Home</a>
-            <button id="toggleListBtn" class="btn btn--ghost" aria-expanded="true" aria-controls="songListPanel" title="Show/Hide list (L)">☰ List</button>
-            <button id="prevBtn" class="btn" aria-label="Previous song (←)" title="Previous song (←)">◀ Prev</button>
-            <button id="nextBtn" class="btn" aria-label="Next song (→)" title="Next song (→)">Next ▶</button>
-            <button id="favToggle" class="btn btn--ghost" title="Favorite (F)">♡</button>
-            <button id="randomBtn" class="btn btn--ghost" title="Random song (R)">🎲 Random</button>
-            <button id="shareBtn" class="btn" title="Share link (S)">📤 Share</button>
-            <button id="helpBtn" class="btn btn--ghost" title="Shortcuts (?)">❓ Help</button>
-            <button id="quickNavBtn" class="btn btn--ghost" title="Quick Navigation (Alt+Q)">⚡</button>
+        <!-- Simplified Top Controls -->
+        <div class="app__top-controls">
+            <button id="toggleListBtn" class="btn btn--ghost list-toggle" aria-expanded="true" aria-controls="songListPanel" title="Show/Hide Songs (L)">
+                <span class="list-toggle__icon">☰</span>
+                <span class="list-toggle__text">Songs</span>
+            </button>
+            <div class="current-song-info">
+                <div class="current-song__collection" id="currentCollection">Sa Yar Ga Toe Pwell</div>
+                <div class="current-song__position" id="songPosition">1 / 35</div>
+            </div>
+            <button id="moreMenuBtn" class="btn btn--ghost" title="More options">⋯</button>
         </div>
 
-        <!-- Image Controls Toolbar -->
-        <div class="image-controls">
-            <button id="zoomInBtn" class="btn btn--small btn--ghost" title="Zoom In (+)">🔍+</button>
-            <button id="zoomOutBtn" class="btn btn--small btn--ghost" title="Zoom Out (-)">🔍-</button>
-            <button id="resetZoomBtn" class="btn btn--small btn--ghost" title="Reset Zoom (0)">↻</button>
-            <button id="fullscreenBtn" class="btn btn--small btn--ghost" title="Fullscreen (F11)">⛶</button>
+        <!-- Floating Zoom Controls -->
+        <div class="zoom-controls" id="zoomControls">
+            <button id="zoomOutBtn" class="zoom-btn" title="Zoom Out (-)">−</button>
+            <button id="resetZoomBtn" class="zoom-btn" title="Reset Zoom (0)">↻</button>
+            <button id="zoomInBtn" class="zoom-btn" title="Zoom In (+)">+</button>
         </div>
 
         <main class="app__main">
@@ -118,6 +118,52 @@
                 </div>
             </section>
         </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav" id="bottomNav">
+            <button id="prevBtn" class="bottom-nav__btn" aria-label="Previous song" title="Previous (←)">
+                <span class="bottom-nav__icon">◀</span>
+                <span class="bottom-nav__label">Previous</span>
+            </button>
+            <button id="favToggle" class="bottom-nav__btn" title="Favorite (F)">
+                <span class="bottom-nav__icon">♡</span>
+                <span class="bottom-nav__label">Favorite</span>
+            </button>
+            <button id="nextBtn" class="bottom-nav__btn" aria-label="Next song" title="Next (→)">
+                <span class="bottom-nav__icon">▶</span>
+                <span class="bottom-nav__label">Next</span>
+            </button>
+            <button id="randomBtn" class="bottom-nav__btn" title="Random song (R)">
+                <span class="bottom-nav__icon">🎲</span>
+                <span class="bottom-nav__label">Random</span>
+            </button>
+            <button id="fullscreenBtn" class="bottom-nav__btn" title="Fullscreen">
+                <span class="bottom-nav__icon">⛶</span>
+                <span class="bottom-nav__label">Fullscreen</span>
+            </button>
+        </nav>
+
+        <!-- More Menu -->
+        <div id="moreMenu" class="more-menu" hidden>
+            <div class="more-menu__panel">
+                <a href="mainmenu.html" class="more-menu__item">
+                    <span class="more-menu__icon">🏠</span>
+                    <span class="more-menu__text">Home</span>
+                </a>
+                <button id="shareBtn" class="more-menu__item" title="Share link (S)">
+                    <span class="more-menu__icon">📤</span>
+                    <span class="more-menu__text">Share</span>
+                </button>
+                <button id="helpBtn" class="more-menu__item" title="Shortcuts (?)">
+                    <span class="more-menu__icon">❓</span>
+                    <span class="more-menu__text">Help</span>
+                </button>
+                <button id="quickNavBtn" class="more-menu__item" title="Quick Navigation">
+                    <span class="more-menu__icon">⚡</span>
+                    <span class="more-menu__text">Quick Nav</span>
+                </button>
+            </div>
+        </div>
 
         <!-- Toast notifications -->
         <div id="toast" class="toast" hidden></div>
