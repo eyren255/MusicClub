@@ -302,6 +302,13 @@ body{
     cursor:pointer;
     transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     border:1px solid transparent;
+    /* Enhanced mobile touch targets */
+    min-height:var(--min-touch-target);
+    min-width:var(--min-touch-target);
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+    -webkit-user-select:none;
+    user-select:none;
 }
 .btn::before{
     content:'';
@@ -1179,39 +1186,77 @@ body{
     flex-direction: column;
     align-items: center;
     gap: 2px;
-    padding: 6px 3px;
+    padding: 8px 4px;
     background: transparent;
     border: none;
     color: var(--muted);
     cursor: pointer;
-    transition: all 0.2s ease;
-    border-radius: 8px;
-    min-width: 48px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 12px;
+    min-width: var(--min-touch-target);
+    min-height: var(--min-touch-target);
     flex: 1;
-    max-width: 64px;
+    max-width: 72px;
     position: relative;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
+    /* Enhanced mobile feedback */
+    -webkit-user-select: none;
+    user-select: none;
+    /* Android haptic feedback */
+    will-change: transform;
 }
 
 .bottom-nav__btn:hover,
 .bottom-nav__btn:focus {
     color: var(--primary);
     background: var(--primary-soft);
-    transform: translateY(-1px);
+    transform: translateY(-1px) scale(1.02);
+    box-shadow: 0 4px 12px rgba(74, 191, 106, 0.2);
 }
 
 .bottom-nav__btn:active {
-    transform: translateY(0);
+    transform: translateY(0) scale(0.98);
+    background: var(--primary-soft);
 }
 
 .bottom-nav__btn.is-active {
     color: var(--primary);
     background: var(--primary-soft);
+    box-shadow: 0 0 0 2px rgba(74, 191, 106, 0.3);
 }
 
 .bottom-nav__btn.is-favorite {
     color: var(--error);
+    animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+/* Enhanced ripple effect for mobile */
+.bottom-nav__btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(74, 191, 106, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.4s ease, height 0.4s ease, opacity 0.6s ease;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.bottom-nav__btn:active::after {
+    width: 80px;
+    height: 80px;
+    opacity: 1;
+}
+
+/* Heartbeat animation for favorites */
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
 }
 
 .bottom-nav__icon {
@@ -1703,11 +1748,60 @@ body{
     }
 }
 
-/* Touch interactions */
+/* Enhanced Touch Interactions for Mobile */
 .bottom-nav__btn,
-.zoom-btn{
+.zoom-btn,
+.btn,
+.song-item,
+.tab,
+.header-btn {
     -webkit-tap-highlight-color:transparent;
     touch-action:manipulation;
+    -webkit-user-select:none;
+    user-select:none;
+}
+
+/* Mobile gesture support for image viewer */
+.viewer__image-wrap {
+    /* Enable pinch-to-zoom and pan gestures */
+    touch-action: pinch-zoom;
+    -webkit-overflow-scrolling: touch;
+    overflow: hidden;
+}
+
+.viewer__image-wrap img {
+    /* Enhanced mobile image interaction */
+    touch-action: pinch-zoom;
+    cursor: grab;
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+}
+
+.viewer__image-wrap img:active {
+    cursor: grabbing;
+}
+
+/* Enhanced mobile swipe areas */
+.app__main {
+    /* Enable horizontal swipe for song navigation */
+    touch-action: pan-y pinch-zoom;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Better mobile sidebar interaction */
+.sidebar {
+    /* Enable smooth touch scrolling */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+
+/* Mobile pull-to-refresh support */
+.song-list {
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* ===== NEW SIMPLIFIED NAVIGATION STYLES ===== */
