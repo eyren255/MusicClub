@@ -306,6 +306,10 @@
         const songImage = document.getElementById('songImage');
         
         if(imageWrap && songImage) {
+            // Disable native drag/ghost image and long-press copy
+            songImage.setAttribute('draggable','false');
+            songImage.addEventListener('dragstart', (e)=> e.preventDefault());
+            songImage.addEventListener('contextmenu', (e)=> e.preventDefault());
             let isDragging = false;
             let startX, startY, currentTransform = {x: 0, y: 0};
             

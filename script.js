@@ -553,6 +553,11 @@
                 document.addEventListener("keydown", handleKeyboard);
                 // Favorite button(s)
                 elements.favToggle?.addEventListener('click', ()=>{ toggleFavorite(); showToast('Toggled favorite'); });
+                // Prevent native drag & long-press copy on the image
+                elements.image.setAttribute('draggable','false');
+                elements.image.addEventListener('dragstart', (e)=> e.preventDefault());
+                elements.image.addEventListener('mousedown', (e)=>{ if(e.button===1){ e.preventDefault(); }});
+                elements.image.addEventListener('contextmenu', (e)=>{ e.preventDefault(); });
                 elements.image.addEventListener("error", () => {
                     showFallback();
                     hideLoadingOverlay();
