@@ -637,6 +637,15 @@
                 if(idx >= 0) selectIndex(idx);
             }
                 }catch(_){ }
+                // Optional: force-bust when loading image assets
+                try{
+                        const params = new URLSearchParams(location.search);
+                        const bust = params.get('t');
+                        if(bust){
+                                const links = document.querySelectorAll('link[rel="stylesheet"]');
+                                links.forEach(l=>{ const u=new URL(l.href, location.href); u.searchParams.set('t', bust); l.href = u.toString(); });
+                        }
+                }catch(_e){ }
                 // Sidebar toggle handled in navigation.js (initSidebar)
                 
                 // Search button in header
