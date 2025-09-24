@@ -115,46 +115,70 @@
                     <div class="meta__title" id="metaTitle">Select a song</div>
                 </div>
                 
-                <!-- Controls -->
-                <div class="viewer__controls">
-                    <button id="prevBtn" class="btn btn--large" title="Previous Song (←)">
-                        ← Previous
-                    </button>
-                    
-                    <div class="viewer__middle-controls">
-                        <button id="favToggle" class="btn btn--favorite" title="Toggle Favorite (F)">
-                            ♡
-                        </button>
-                        <button id="randomBtn" class="btn" title="Random Song (R)">
-                            🎲 Random
-                        </button>
-                        <button id="shareBtn" class="btn" title="Share Song (S)">
-                            📤 Share
-                        </button>
-                    </div>
-                    
-                    <button id="nextBtn" class="btn btn--large" title="Next Song (→)">
-                        Next →
-                    </button>
-                </div>
-                
-                <!-- Enhanced Zoom Controls -->
-                <div class="zoom-controls" id="zoomControls">
-                    <button id="zoomOutBtn" class="zoom-btn" title="Zoom Out (-)">−</button>
-                    <button id="resetZoomBtn" class="zoom-btn" title="Reset Zoom (0)">↻</button>
-                    <button id="zoomInBtn" class="zoom-btn" title="Zoom In (+)">+</button>
-                    <div class="zoom-level-display" id="zoomLevelDisplay">100%</div>
-                </div>
                 
             </main>
             
         </div>
         
-        <!-- Back to Home -->
-        <div class="app__footer">
-            <a href="mainmenu.html" class="btn btn--ghost">
-                ← Back to Home
-            </a>
+        <!-- Unified Bottom Navigation -->
+        <nav class="bottom-nav" id="bottomNav">
+            <button id="prevBtn" class="bottom-nav__btn" title="Previous Song (←)" aria-label="Previous song">
+                <span class="bottom-nav__icon">←</span>
+                <span class="bottom-nav__label">Previous</span>
+            </button>
+            
+            <button id="favToggle" class="bottom-nav__btn" title="Toggle Favorite (F)" aria-label="Toggle favorite">
+                <span class="bottom-nav__icon">♡</span>
+                <span class="bottom-nav__label">Favorite</span>
+            </button>
+            
+            <button id="nextBtn" class="bottom-nav__btn" title="Next Song (→)" aria-label="Next song">
+                <span class="bottom-nav__icon">→</span>
+                <span class="bottom-nav__label">Next</span>
+            </button>
+            
+            <button id="randomBtn" class="bottom-nav__btn" title="Random Song (R)" aria-label="Random song">
+                <span class="bottom-nav__icon">🎲</span>
+                <span class="bottom-nav__label">Random</span>
+            </button>
+            
+            <button id="moreMenuBtn" class="bottom-nav__btn" title="More Options" aria-label="More options">
+                <span class="bottom-nav__icon">⋯</span>
+                <span class="bottom-nav__label">More</span>
+            </button>
+        </nav>
+        
+        <!-- More Menu Dropdown -->
+        <div class="more-menu" id="moreMenu" hidden>
+            <div class="more-menu__panel">
+                <button class="more-menu__item" id="shareBtn" title="Share Song (S)">
+                    <span class="more-menu__icon">📤</span>
+                    <span class="more-menu__text">Share Song</span>
+                </button>
+                <button class="more-menu__item" id="moreMenuToggleList" title="Show Songs (L)">
+                    <span class="more-menu__icon">☰</span>
+                    <span class="more-menu__text">Song List</span>
+                </button>
+                <button class="more-menu__item" id="zoomMenuBtn" title="Zoom Controls">
+                    <span class="more-menu__icon">⊞</span>
+                    <span class="more-menu__text">Zoom</span>
+                </button>
+                <a href="mainmenu.html" class="more-menu__item" title="Back to Home">
+                    <span class="more-menu__icon">🏠</span>
+                    <span class="more-menu__text">Home</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Floating Zoom Controls (shown on demand) -->
+        <div class="zoom-controls" id="zoomControls" hidden>
+            <div class="zoom-controls__panel">
+                <button id="zoomOutBtn" class="zoom-btn" title="Zoom Out (-)" aria-label="Zoom out">−</button>
+                <button id="resetZoomBtn" class="zoom-btn" title="Reset Zoom (0)" aria-label="Reset zoom">↻</button>
+                <button id="zoomInBtn" class="zoom-btn" title="Zoom In (+)" aria-label="Zoom in">+</button>
+                <div class="zoom-level-display" id="zoomLevelDisplay">100%</div>
+                <button id="closeZoomBtn" class="zoom-btn zoom-btn--close" title="Close" aria-label="Close zoom controls">✕</button>
+            </div>
         </div>
         
     </div>

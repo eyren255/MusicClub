@@ -1,6 +1,142 @@
 (function(){
         "use strict";
 
+        /** ===== UNIFIED VISIBILITY MANAGEMENT ===== */
+        
+        // Centralized visibility management system
+        const VisibilityManager = {
+            show(element, method = 'hidden') {
+                if (!element) return;
+                
+                switch(method) {
+                    case 'hidden':
+                        element.hidden = false;
+                        break;
+                    case 'class':
+                        element.classList.remove('hidden');
+                        element.classList.add('visible');
+                        break;
+                    case 'display':
+                        element.style.display = '';
+                        break;
+                }
+            },
+            
+            hide(element, method = 'hidden') {
+                if (!element) return;
+                
+                switch(method) {
+                    case 'hidden':
+                        element.hidden = true;
+                        break;
+                    case 'class':
+                        element.classList.remove('visible');
+                        element.classList.add('hidden');
+                        break;
+                    case 'display':
+                        element.style.display = 'none';
+                        break;
+                }
+            },
+            
+            toggle(element, method = 'hidden') {
+                if (!element) return;
+                
+                const isVisible = this.isVisible(element, method);
+                if (isVisible) {
+                    this.hide(element, method);
+                } else {
+                    this.show(element, method);
+                }
+                return !isVisible;
+            },
+            
+            isVisible(element, method = 'hidden') {
+                if (!element) return false;
+                
+                switch(method) {
+                    case 'hidden':
+                        return !element.hidden;
+                    case 'class':
+                        return element.classList.contains('visible') && !element.classList.contains('hidden');
+                    case 'display':
+                        return element.style.display !== 'none' && window.getComputedStyle(element).display !== 'none';
+                    default:
+                        return !element.hidden;
+                }
+            }
+        };
+        
+        // Convenience methods for common UI elements
+        const UI = {
+            showBottomNav: () => VisibilityManager.show(document.getElementById('bottomNav')),
+            hideBottomNav: () => VisibilityManager.hide(document.getElementById('bottomNav')),
+            
+            showMoreMenu: () => VisibilityManager.show(document.getElementById('moreMenu')),
+            hideMoreMenu: () => VisibilityManager.hide(document.getElementById('moreMenu')),
+            toggleMoreMenu: () => VisibilityManager.toggle(document.getElementById('moreMenu')),
+            
+            showZoomControls: () => VisibilityManager.show(document.getElementById('zoomControls')),
+            hideZoomControls: () => VisibilityManager.hide(document.getElementById('zoomControls')),
+            toggleZoomControls: () => VisibilityManager.toggle(document.getElementById('zoomControls')),
+            
+            showSongList: () => {
+                const listPanel = document.getElementById('songListPanel');
+                if (listPanel) {
+                    listPanel.classList.add('is-open');
+                    const toggleBtn = document.getElementById('toggleListBtn');
+                    if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
+                }
+            },
+            
+            hideSongList: () => {
+                const listPanel = document.getElementById('songListPanel');
+                if (listPanel) {
+                    listPanel.classList.remove('is-open');
+                    const toggleBtn = document.getElementById('toggleListBtn');
+                    if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
+                }
+            },
+            
+            showImageFallback: () => {
+                VisibilityManager.hide(document.getElementById('songImage'));
+                VisibilityManager.show(document.getElementById('imageFallback'));
+            },
+            
+            hideImageFallback: () => {
+                VisibilityManager.show(document.getElementById('songImage'));
+                VisibilityManager.hide(document.getElementById('imageFallback'));
+            },
+            
+            showLoadingOverlay: () => {
+                const overlay = document.getElementById('imageLoadingOverlay');
+                const viewer = document.querySelector('.viewer');
+                VisibilityManager.show(overlay);
+                if (viewer) viewer.setAttribute('aria-busy', 'true');
+            },
+            
+            hideLoadingOverlay: () => {
+                const overlay = document.getElementById('imageLoadingOverlay');
+                const viewer = document.querySelector('.viewer');
+                VisibilityManager.hide(overlay);
+                if (viewer) viewer.setAttribute('aria-busy', 'false');
+            },
+            
+            showToast: (message, type = 'info', duration = 3000) => {
+                const toast = document.getElementById('toast');
+                if (toast) {
+                    toast.textContent = message;
+                    toast.className = `toast ${type}`;
+                    VisibilityManager.show(toast);
+                    
+                    clearTimeout(UI._toastTimeout);
+                    UI._toastTimeout = setTimeout(() => {
+                        VisibilityManager.hide(toast);
+                    }, duration);
+                }
+            }
+        };
+
         /** Collections */
         const collections = {
                 "Sa Yar Ga Toe Pwell": [
@@ -1621,6 +1757,90 @@ function handleFullscreenChange() {
                 renderList();
                 selectIndex(0);
                 updateFavUi();
+
+        // ===== NEW BOTTOM NAVIGATION EVENT HANDLERS =====
+        
+        // More menu functionality
+        const newMoreMenuBtn = document.getElementById('moreMenuBtn');
+        const newMoreMenu = document.getElementById('moreMenu');
+        const zoomMenuBtn = document.getElementById('zoomMenuBtn');
+        const closeZoomBtn = document.getElementById('closeZoomBtn');
+        
+        if (newMoreMenuBtn) {
+            newMoreMenuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                UI.toggleMoreMenu();
+            });
+        }
+        
+        // Zoom controls functionality  
+        if (zoomMenuBtn) {
+            zoomMenuBtn.addEventListener('click', () => {
+                UI.hideMoreMenu();
+                UI.showZoomControls();
+            });
+        }
+        
+        if (closeZoomBtn) {
+            closeZoomBtn.addEventListener('click', () => {
+                UI.hideZoomControls();
+            });
+        }
+        
+        // Enhanced favorite button animation
+        function updateFavoriteButton() {
+            const favBtn = document.getElementById('favToggle');
+            if (favBtn) {
+                // Get current favorites array and check if current index is in favorites
+                const currentFavorites = getFavorites();
+                const isFavorite = currentFavorites && currentFavorites.includes(currentIndex);
+                
+                if (isFavorite) {
+                    favBtn.classList.add('is-favorite');
+                    const icon = favBtn.querySelector('.bottom-nav__icon');
+                    if (icon) icon.textContent = '♥';
+                } else {
+                    favBtn.classList.remove('is-favorite');
+                    const icon = favBtn.querySelector('.bottom-nav__icon');
+                    if (icon) icon.textContent = '♡';
+                }
+            }
+        }
+        
+        // Initialize bottom navigation
+        function initBottomNavigation() {
+            // Defer initialization to avoid variable dependency issues
+            setTimeout(() => {
+                updateFavoriteButton();
+                
+                // Update button states based on current song
+                const songs = getSongs();
+                const prevBtn = document.getElementById('prevBtn');
+                const nextBtn = document.getElementById('nextBtn');
+                
+                if (prevBtn) {
+                    prevBtn.disabled = currentIndex <= 0;
+                    prevBtn.style.opacity = currentIndex <= 0 ? '0.5' : '1';
+                }
+                
+                if (nextBtn) {
+                    nextBtn.disabled = currentIndex >= songs.length - 1;
+                    nextBtn.style.opacity = currentIndex >= songs.length - 1 ? '0.5' : '1';
+                }
+            }, 100);
+        }
+        
+        // Add event handler for the more menu list toggle with the new ID
+        const moreMenuToggleListBtn = document.getElementById('moreMenuToggleList');
+        if (moreMenuToggleListBtn) {
+            moreMenuToggleListBtn.addEventListener('click', () => {
+                UI.hideMoreMenu();
+                UI.showSongList();
+            });
+        }
+        
+        // Call initialization
+        initBottomNavigation();
 
 })();
 
