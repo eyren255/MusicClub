@@ -267,7 +267,15 @@
                 // Loading elements
                 loadingOverlay: document.getElementById("imageLoadingOverlay"),
                 zoomIndicator: document.getElementById("zoomIndicator"),
-                zoomLevel: document.getElementById("zoomLevel")
+                zoomLevel: document.getElementById("zoomLevel"),
+                // Bottom navigation elements
+                randomBtn: document.getElementById("randomBtn"),
+                moreMenuBtn: document.getElementById("moreMenuBtn"),
+                shareBtn: document.getElementById("shareBtn"),
+                moreMenuToggleList: document.getElementById("moreMenuToggleList"),
+                resetZoomMenuBtn: document.getElementById("resetZoomMenuBtn"),
+                zoomControls: document.getElementById("zoomControls"),
+                moreMenu: document.getElementById("moreMenu")
         };
 
     let currentIndex = 0; // 0-based
@@ -1836,6 +1844,16 @@ function handleFullscreenChange() {
             moreMenuToggleListBtn.addEventListener('click', () => {
                 UI.hideMoreMenu();
                 UI.showSongList();
+            });
+        }
+        
+        // Add event handler for the reset zoom menu button
+        const resetZoomMenuBtn = document.getElementById('resetZoomMenuBtn');
+        if (resetZoomMenuBtn) {
+            resetZoomMenuBtn.addEventListener('click', () => {
+                UI.hideMoreMenu();
+                resetZoom();
+                showToast('Zoom reset to 100%');
             });
         }
         

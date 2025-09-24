@@ -1147,7 +1147,7 @@ body{
     right: 0;
     background: linear-gradient(180deg, var(--panel) 0%, rgba(17, 26, 20, 0.95) 100%);
     border-top: 1px solid var(--border);
-    padding: 12px 16px;
+    padding: 8px 8px;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -1155,22 +1155,25 @@ body{
     -webkit-backdrop-filter: blur(20px);
     z-index: 100;
     box-shadow: 0 -4px 20px var(--shadow-soft);
-    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    gap: 2px;
 }
 
 .bottom-nav__btn {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    padding: 8px 6px;
+    gap: 2px;
+    padding: 6px 3px;
     background: transparent;
     border: none;
     color: var(--muted);
     cursor: pointer;
     transition: all 0.2s ease;
-    border-radius: 12px;
-    min-width: 60px;
+    border-radius: 8px;
+    min-width: 48px;
+    flex: 1;
+    max-width: 64px;
     position: relative;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
@@ -1197,16 +1200,18 @@ body{
 }
 
 .bottom-nav__icon {
-    font-size: 20px;
+    font-size: 18px;
     line-height: 1;
 }
 
 .bottom-nav__label {
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 500;
     line-height: 1;
     text-align: center;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* More Menu Dropdown */
