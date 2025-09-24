@@ -207,9 +207,14 @@
 
         function updateMeta(){
             updateCurrentSongDisplay();
-                const songs = getSongs();
+            const songs = getSongs();
+            // Update old elements if they exist (for legacy support)
+            if (elements.metaIndex) {
                 elements.metaIndex.textContent = `${currentIndex + 1} / ${songs.length}`;
+            }
+            if (elements.metaTitle) {
                 elements.metaTitle.textContent = songs[currentIndex] || "—";
+            }
         }
 
         function loadImageForCurrent(){
