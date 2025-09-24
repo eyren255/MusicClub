@@ -348,6 +348,9 @@
                 // On small screens, auto-close the list to reveal the image
                 if(window.innerWidth <= 900 && elements.listPanel && elements.listPanel.classList.contains("is-open")){
                         hideSongDrawer();
+                        const overlayEl = document.getElementById('sidebarOverlay');
+                        if(overlayEl){ overlayEl.hidden = true; overlayEl.classList.remove('is-visible'); }
+                        if(elements.toggleList){ elements.toggleList.classList.remove('is-on'); elements.toggleList.setAttribute('aria-expanded','false'); }
                 }
         }
 
@@ -622,15 +625,30 @@
                 if(idx >= 0) selectIndex(idx);
             }
                 }catch(_){ }
+                // Sidebar overlay + toggle helpers
+                const sidebarOverlay = document.getElementById('sidebarOverlay');
+                function syncSidebarUi(){
+                        const open = elements.songDrawer?.classList.contains('is-open');
+                        if(elements.toggleList){
+                                elements.toggleList.classList.toggle('is-on', !!open);
+                                elements.toggleList.setAttribute('aria-expanded', open ? 'true' : 'false');
+                        }
+                        if(sidebarOverlay){
+                                sidebarOverlay.hidden = !open;
+                                sidebarOverlay.classList.toggle('is-visible', !!open);
+                        }
+                }
                 // Song list drawer toggle
                 elements.toggleList?.addEventListener("click", function(){
                         const isOpen = elements.songDrawer?.classList.contains('is-open');
-                        if(isOpen){ hideSongDrawer(); } else { showSongDrawer(); }
+                        if(isOpen){ hideSongDrawer(); } else { showSongDrawer(); setTimeout(()=>elements.search?.focus(),120); }
+                        syncSidebarUi();
                 });
                 
                 // Close drawer events
-                elements.closeDrawerBtn?.addEventListener('click', hideSongDrawer);
-                elements.drawerBackdrop?.addEventListener('click', hideSongDrawer);
+                elements.closeDrawerBtn?.addEventListener('click', ()=>{ hideSongDrawer(); syncSidebarUi(); });
+                elements.drawerBackdrop?.addEventListener('click', ()=>{ hideSongDrawer(); syncSidebarUi(); });
+                sidebarOverlay?.addEventListener('click', ()=>{ hideSongDrawer(); syncSidebarUi(); });
                 
                 // Search button in header
                 elements.searchBtn?.addEventListener('click', function() {

@@ -28,6 +28,7 @@
             <span class="credit-badge">Website made by <strong>Shin Myat Tun</strong></span>
             <div class="app__controls">
                 <a href="mainmenu.html" class="btn btn--ghost" title="Home">Home</a>
+                <button id="quickNavBtn" class="btn btn--ghost" title="Quick Navigation (Alt+Q)" aria-label="Quick Navigation">⚡</button>
                 <button id="toggleListBtn" class="btn btn--ghost" aria-expanded="false" aria-controls="songListPanel" title="Toggle song list">☰ Songs</button>
             </div>
         </header>
@@ -41,7 +42,7 @@
         </nav>
 
         <!-- Main Content -->
-        <div class="app__content">
+        <div class="app__main">
             
             <!-- Song List Sidebar -->
             <aside id="songListPanel" class="sidebar">
@@ -72,6 +73,7 @@
                 <!-- Song List -->
                 <ol id="songList" class="song-list" start="1"></ol>
             </aside>
+            <div id="sidebarOverlay" class="sidebar-overlay" hidden></div>
             
             <!-- Main Viewer -->
             <main class="viewer">
@@ -156,6 +158,7 @@
         </div>
         
     </div>
+    <div class="bg-soft" aria-hidden="true"></div>
     
     <!-- Toast Notifications -->
     <div id="toast" class="toast" hidden></div>
@@ -176,6 +179,33 @@
                     <li>L : Toggle song list</li>
                     <li>+ - 0 : Zoom controls</li>
                 </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Navigation Menu -->
+    <div id="quickNavMenu" class="quick-nav" hidden role="dialog" aria-labelledby="quickNavTitle">
+        <div class="quick-nav__panel">
+            <div class="quick-nav__header">
+                <h3 id="quickNavTitle">Quick Navigation</h3>
+                <button id="quickNavClose" class="btn btn--ghost small" aria-label="Close">✕</button>
+            </div>
+            <div class="quick-nav__content">
+                <a href="app.html" class="quick-nav__item">
+                    <span class="quick-nav__icon">🎵</span>
+                    <span class="quick-nav__text">Browse Songs</span>
+                    <span class="quick-nav__shortcut">Ctrl+1</span>
+                </a>
+                <a href="learn.html" class="quick-nav__item">
+                    <span class="quick-nav__icon">📚</span>
+                    <span class="quick-nav__text">Learning Resources</span>
+                    <span class="quick-nav__shortcut">Ctrl+2</span>
+                </a>
+                <button class="quick-nav__item" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                    <span class="quick-nav__icon">↑</span>
+                    <span class="quick-nav__text">Back to Top</span>
+                    <span class="quick-nav__shortcut">Alt+T</span>
+                </button>
             </div>
         </div>
     </div>
