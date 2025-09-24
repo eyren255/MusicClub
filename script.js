@@ -107,6 +107,7 @@
                 songCounter: document.getElementById("songCounter"),
                 searchBtn: document.getElementById("searchBtn"),
                 favoriteBtn: document.getElementById("favoriteBtn"),
+                favToggle: document.getElementById("favToggle"),
                 zoomBtn: document.getElementById("zoomBtn"),
                 // Song drawer elements (sidebar)
                 songDrawer: document.getElementById("songListPanel"),
@@ -550,6 +551,8 @@
                 elements.prev.addEventListener("click", selectPrev);
                 elements.next.addEventListener("click", selectNext);
                 document.addEventListener("keydown", handleKeyboard);
+                // Favorite button(s)
+                elements.favToggle?.addEventListener('click', ()=>{ toggleFavorite(); showToast('Toggled favorite'); });
                 elements.image.addEventListener("error", () => {
                     showFallback();
                     hideLoadingOverlay();
@@ -1448,6 +1451,17 @@ function handleFullscreenChange() {
         addPinchZoom();
         handleImageDrag();
         initImageClickHandler();
+        // Focus Mode toggle (press \\ or double-tap background): hides chrome for instrument players
+        function toggleFocusMode(){
+            document.body.classList.toggle('viewer--focus');
+            setTimeout(()=>{ if(elements.image && elements.image.naturalWidth) fitToScreen(); }, 60);
+        }
+        document.addEventListener('keydown', (e)=>{
+            if(e.key === '\\'){
+                e.preventDefault();
+                toggleFocusMode();
+            }
+        });
         
         // Show controls initially
         showImageControls();

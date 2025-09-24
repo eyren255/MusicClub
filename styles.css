@@ -492,10 +492,15 @@ body{
 
 .viewer{display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden}
 .viewer__image-wrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;padding:12px;overflow:hidden}
+.viewer--focus .app__header,
+.viewer--focus .breadcrumb,
+.viewer--focus .sidebar,
+.viewer--focus .app__footer{display:none}
+.viewer--focus .viewer__image-wrap{padding:8px}
 .viewer__image-wrap img{
     max-width:100%;
     height:auto;
-    max-height:85vh;
+    max-height:90vh;
     border-radius:12px;
     border:2px solid var(--border-light);
     background:linear-gradient(135deg, #0d1410, #111a14);
@@ -563,7 +568,7 @@ body{
         overscroll-behavior:contain;
     }
     .viewer__image-wrap img{
-        max-height:75vh;
+        max-height:85svh;
         border-radius:12px;
         /* Smoother touch interactions */
         touch-action:manipulation;
