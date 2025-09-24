@@ -903,55 +903,37 @@ body{
 
 /* Enhanced Image Controls and Loading States - auto-hide for better image viewing */
 .image-controls{
-    position:sticky;
-    top:136px;
-    z-index:40;
-    background:linear-gradient(135deg, var(--panel) 0%, var(--panel-light) 100%);
-    border-bottom:1px solid var(--border);
-    padding:8px 20px;
+    position:fixed;
+    bottom:30px;
+    left:50%;
+    transform:translateX(-50%) translateY(0);
+    z-index:1000;
+    background:rgba(0,0,0,.9);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:30px;
+    padding:12px 20px;
     display:flex;
-    gap:8px;
+    gap:10px;
     justify-content:center;
     backdrop-filter:blur(20px);
-    box-shadow:0 4px 12px rgba(0,0,0,0.1);
-    /* Auto-hide animation */
+    -webkit-backdrop-filter:blur(20px);
+    box-shadow:0 8px 32px rgba(0,0,0,0.6);
     transition:transform 0.3s ease, opacity 0.3s ease;
-    transform:translateY(0);
     opacity:1;
+    max-width:calc(100vw - 40px);
 }
 
-/* Hide image controls when scrolling down on mobile */
-@media (max-width: 768px) {
-    .scrolling-down .image-controls{
-        transform:translateY(-100%);
-        opacity:0;
-        pointer-events:none;
-    }
-    
-    /* Show image controls when scrolling up or when tapped */
-    .scrolling-up .image-controls,
-    .toolbar-visible .image-controls{
-        transform:translateY(0);
-        opacity:1;
-        pointer-events:auto;
-    }
-    
-    /* Add a tap area to show controls when image is tapped */
-    .viewer__image-wrap{
-        position:relative;
-    }
-    
-    .viewer__image-wrap::before{
-        content:'';
-        position:absolute;
-        top:0;
-        left:0;
-        right:0;
-        bottom:0;
-        z-index:1;
-        background:transparent;
-        cursor:pointer;
-    }
+/* Simple hide/show for image controls */
+.image-controls.hidden{
+    transform:translateX(-50%) translateY(120%);
+    opacity:0;
+    pointer-events:none;
+}
+
+.image-controls.visible{
+    transform:translateX(-50%) translateY(0);
+    opacity:1;
+    pointer-events:auto;
 }
 
 .btn--small{
@@ -1039,24 +1021,40 @@ body{
     right:0;
     bottom:0;
     z-index:9999;
-    background:var(--bg);
+    background:#000;
+    display:flex;
+    flex-direction:column;
 }
 
 .viewer.fullscreen .viewer__image-wrap{
-    padding:20px;
+    padding:0;
+    height:100vh;
+    width:100vw;
+    position:relative;
+    overflow:hidden;
+    flex:1;
 }
 
 .viewer.fullscreen .viewer__image-wrap img{
-    max-height:100vh;
-    max-width:100vw;
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    border-radius:0;
+    user-select:none;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    transition:transform 0.2s ease-out;
+    transform-origin:center center;
 }
 
 /* Mobile image controls */
 @media (max-width: 900px){
     .image-controls{
-        top:120px;
-        padding:6px 10px;
-        gap:6px;
+        bottom:20px;
+        padding:10px 16px;
+        gap:8px;
+        border-radius:25px;
     }
     
     .btn--small{

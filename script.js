@@ -104,10 +104,10 @@
                 tabFav: document.getElementById("tabFav"),
         tabRecent: document.getElementById("tabRecent"),
                 favToggle: document.getElementById("favToggle"),
-                fsToggle: document.getElementById("fsToggle"),
+                fullscreenBtn: document.getElementById("fullscreenBtn"),
                 zoomInBtn: document.getElementById("zoomInBtn"),
                 zoomOutBtn: document.getElementById("zoomOutBtn"),
-                zoomResetBtn: document.getElementById("zoomResetBtn"),
+                zoomResetBtn: document.getElementById("resetZoomBtn"),
         colMusicList: document.getElementById("colMusicList"),
         colSaYar: document.getElementById("colSaYar"),
         randomBtn: document.getElementById('randomBtn'),
@@ -120,7 +120,7 @@
     let recentByCollection = loadJson('recentByCollection', {});
     let activeTab = loadJson('activeTab', 'all');
     currentCollection = loadJson('lastCollection', currentCollection);
-        let zoomScale = 1;
+        // Removed zoomScale - using currentZoom consistently
 
         function saveJson(key, value){
                 try{ localStorage.setItem(key, JSON.stringify(value)); }catch(_){}
@@ -304,9 +304,7 @@
                 currentIndex = index;
                 renderList();
                 updateMeta();
-                // Reset zoom when changing images for better UX
-                resetZoom();
-                loadImageForCurrent();
+                loadImageForCurrent(); // This will reset zoom automatically
         updateFavUi();
         pushRecent(index);
                 // On small screens, auto-close the list to reveal the image
@@ -321,6 +319,7 @@
 
         function handleKeyboard(e){
                 // ArrowUp/Down moves selection within list, ArrowLeft/Right also prev/next
+                const songs = getSongs();
                 switch(e.key){
                         case "ArrowUp": e.preventDefault(); selectPrev(); break;
                         case "ArrowDown": e.preventDefault(); selectNext(); break;
@@ -756,9 +755,10 @@
         
         // Attach to viewer area for better UX
         const touchViewer = document.querySelector(".viewer__image-wrap");
-        touchViewer.addEventListener("touchstart", onTouchStart, {passive:false});
-        touchViewer.addEventListener("touchmove", onTouchMove, {passive:false});
-        touchViewer.addEventListener("touchend", onTouchEnd, {passive:true});
+        // Disabled old touch handlers - using unified addPinchZoom() instead
+        // touchViewer.addEventListener("touchstart", onTouchStart, {passive:false});
+        // touchViewer.addEventListener("touchmove", onTouchMove, {passive:false});
+        // touchViewer.addEventListener("touchend", onTouchEnd, {passive:true});
     // Remove mobile zoom gestures
 
 // Enhanced image viewer with zoom functionality
@@ -812,14 +812,69 @@ function hideLoadingOverlay() {
 
 function zoomIn() {
     applyZoom(currentZoom * 1.25);
+    showImageControls(); // Show controls when zooming
 }
 
 function zoomOut() {
     applyZoom(currentZoom * 0.8);
+    showImageControls(); // Show controls when zooming
 }
 
 function resetZoom() {
     applyZoom(1, true);
+    showImageControls(); // Show controls when resetting
+}
+
+// Add pinch-to-zoom support for mobile with conflict prevention
+function addPinchZoom() {
+    const img = elements.image;
+    let initialDistance = 0;
+    let initialZoom = 1;
+    let isPinching = false;
+    
+    function getTouchDistance(touches) {
+        const dx = touches[0].clientX - touches[1].clientX;
+        const dy = touches[0].clientY - touches[1].clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+    
+    function onTouchStart(e) {
+        if (e.touches.length === 2) {
+            e.preventDefault();
+            isPinching = true;
+            // Cancel any ongoing drag
+            if (isDragging) {
+                isDragging = false;
+                img.parentElement.classList.remove('dragging');
+            }
+            initialDistance = getTouchDistance(e.touches);
+            initialZoom = currentZoom;
+            showImageControls();
+        }
+    }
+    
+    function onTouchMove(e) {
+        if (e.touches.length === 2 && isPinching) {
+            e.preventDefault();
+            const distance = getTouchDistance(e.touches);
+            const scale = distance / initialDistance;
+            const newZoom = Math.max(0.5, Math.min(5, initialZoom * scale));
+            applyZoom(newZoom);
+        }
+    }
+    
+    function onTouchEnd(e) {
+        if (e.touches.length < 2) {
+            isPinching = false;
+        }
+    }
+    
+    img.addEventListener('touchstart', onTouchStart, { passive: false });
+    img.addEventListener('touchmove', onTouchMove, { passive: false });
+    img.addEventListener('touchend', onTouchEnd, { passive: false });
+    
+    // Export for conflict detection
+    window.isPinching = () => isPinching;
 }
 
 function toggleFullscreen() {
@@ -838,67 +893,145 @@ function toggleFullscreen() {
     }
 }
 
-// Image dragging for zoomed images
+// Enhanced image dragging for zoomed images with better mobile support
 function handleImageDrag() {
     const img = elements.image;
     const imageWrap = img.parentElement;
     
     let startX, startY, initialTranslateX, initialTranslateY;
+    let dragStartTime = 0;
+    let hasMoved = false;
     
-    function onMouseDown(e) {
+    function onPointerStart(clientX, clientY, e) {
         if (currentZoom <= 1) return;
-        e.preventDefault();
+        // Don't start drag if pinching
+        if (window.isPinching && window.isPinching()) return;
+        e?.preventDefault();
         isDragging = true;
-        startX = e.clientX;
-        startY = e.clientY;
+        hasMoved = false;
+        dragStartTime = Date.now();
+        startX = clientX;
+        startY = clientY;
         initialTranslateX = imageTranslateX;
         initialTranslateY = imageTranslateY;
+        
+        imageWrap.classList.add('dragging');
         img.style.cursor = 'grabbing';
+        
+        // Show controls when starting to drag
+        showImageControls();
     }
     
-    function onMouseMove(e) {
+    function onPointerMove(clientX, clientY, e) {
         if (!isDragging || currentZoom <= 1) return;
-        e.preventDefault();
-        const deltaX = e.clientX - startX;
-        const deltaY = e.clientY - startY;
+        e?.preventDefault();
+        
+        const deltaX = clientX - startX;
+        const deltaY = clientY - startY;
+        
+        // Threshold for considering it a drag vs click
+        if (!hasMoved && (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5)) {
+            hasMoved = true;
+        }
+        
         imageTranslateX = initialTranslateX + deltaX / currentZoom;
         imageTranslateY = initialTranslateY + deltaY / currentZoom;
+        
+        // Apply bounds checking using natural image dimensions to prevent dragging too far
+        const wrapRect = imageWrap.getBoundingClientRect();
+        const imgNaturalWidth = img.naturalWidth || img.width;
+        const imgNaturalHeight = img.naturalHeight || img.height;
+        
+        // Guard against unloaded images (naturalWidth/Height = 0)
+        if (imgNaturalWidth === 0 || imgNaturalHeight === 0) {
+            // Image not loaded yet, skip bounds checking
+            applyZoom(currentZoom);
+            return;
+        }
+        
+        // Calculate displayed image size (respecting object-fit: contain behavior)
+        const aspectRatio = imgNaturalWidth / imgNaturalHeight;
+        const wrapAspectRatio = wrapRect.width / wrapRect.height;
+        
+        let displayedWidth, displayedHeight;
+        if (aspectRatio > wrapAspectRatio) {
+            displayedWidth = wrapRect.width;
+            displayedHeight = wrapRect.width / aspectRatio;
+        } else {
+            displayedWidth = wrapRect.height * aspectRatio;
+            displayedHeight = wrapRect.height;
+        }
+        
+        // Calculate max translation based on zoom level
+        const maxTranslateX = Math.max(0, (displayedWidth * currentZoom - wrapRect.width) / (2 * currentZoom));
+        const maxTranslateY = Math.max(0, (displayedHeight * currentZoom - wrapRect.height) / (2 * currentZoom));
+        
+        imageTranslateX = Math.max(-maxTranslateX, Math.min(maxTranslateX, imageTranslateX));
+        imageTranslateY = Math.max(-maxTranslateY, Math.min(maxTranslateY, imageTranslateY));
+        
         applyZoom(currentZoom);
     }
     
-    function onMouseUp() {
+    function onPointerEnd() {
         if (!isDragging) return;
         isDragging = false;
+        imageWrap.classList.remove('dragging');
         img.style.cursor = currentZoom > 1 ? 'grab' : '';
+        
+        // If it wasn't really a drag, consider it a click for showing controls
+        if (!hasMoved && Date.now() - dragStartTime < 300) {
+            setTimeout(() => toggleImageControls(), 10);
+        }
+    }
+    
+    // Mouse events
+    function onMouseDown(e) {
+        onPointerStart(e.clientX, e.clientY, e);
+    }
+    
+    function onMouseMove(e) {
+        onPointerMove(e.clientX, e.clientY, e);
+    }
+    
+    function onMouseUp() {
+        onPointerEnd();
     }
     
     img.addEventListener('mousedown', onMouseDown);
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
     
-    // Touch support
+    // Touch events with improved support
     function onTouchStart(e) {
         if (currentZoom <= 1 || e.touches.length !== 1) return;
         e.preventDefault();
         const touch = e.touches[0];
-        onMouseDown({ clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => {} });
+        onPointerStart(touch.clientX, touch.clientY, e);
     }
     
     function onTouchMove(e) {
         if (!isDragging || currentZoom <= 1 || e.touches.length !== 1) return;
         e.preventDefault();
         const touch = e.touches[0];
-        onMouseMove({ clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => {} });
+        onPointerMove(touch.clientX, touch.clientY, e);
     }
     
     function onTouchEnd(e) {
         if (!isDragging) return;
-        onMouseUp();
+        e.preventDefault();
+        onPointerEnd();
     }
     
     img.addEventListener('touchstart', onTouchStart, { passive: false });
     img.addEventListener('touchmove', onTouchMove, { passive: false });
     img.addEventListener('touchend', onTouchEnd, { passive: false });
+    
+    // Prevent context menu on long press when zoomed
+    img.addEventListener('contextmenu', (e) => {
+        if (currentZoom > 1) {
+            e.preventDefault();
+        }
+    });
 }
 
 // Toast notification system
@@ -981,94 +1114,115 @@ function createToast() {
 
     // Settings drawer removed
 
-function toggleFullscreen(){ /* disabled */ }
+function toggleFullscreen() {
+    const viewer = document.querySelector('.viewer');
+    
+    if (!document.fullscreenElement) {
+        if (viewer.requestFullscreen) {
+            viewer.requestFullscreen();
+        } else if (viewer.webkitRequestFullscreen) {
+            viewer.webkitRequestFullscreen();
+        } else if (viewer.mozRequestFullScreen) {
+            viewer.mozRequestFullScreen();
+        } else if (viewer.msRequestFullscreen) {
+            viewer.msRequestFullscreen();
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+    }
+}
 
-        // Auto-hide toolbar functionality for mobile
-        let lastScrollTop = 0;
-        let scrollTimeout;
-        let isScrolling = false;
+// Fullscreen event listeners
+document.addEventListener('fullscreenchange', handleFullscreenChange);
+document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+function handleFullscreenChange() {
+    const viewer = document.querySelector('.viewer');
+    const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement || 
+                           document.mozFullScreenElement || document.msFullscreenElement);
+    
+    if (isFullscreen) {
+        viewer.classList.add('fullscreen');
+        showImageControls();
+    } else {
+        viewer.classList.remove('fullscreen');
+    }
+}
+
+        // Simple image controls toggle functionality
+        let controlsTimeout;
+        let imageControlsVisible = true;
         
-        function handleScrollDirection() {
-            if (window.innerWidth > 768) return; // Only apply on mobile devices
+        function showImageControls() {
+            const controls = document.querySelector('.image-controls');
+            if (!controls) return;
             
-            const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const scrollDelta = Math.abs(currentScrollTop - lastScrollTop);
+            controls.classList.remove('hidden');
+            controls.classList.add('visible');
+            imageControlsVisible = true;
             
-            // Only trigger if scroll is significant enough (prevents jitter)
-            if (scrollDelta < 5) return;
+            // Clear existing timeout
+            clearTimeout(controlsTimeout);
             
-            isScrolling = true;
-            clearTimeout(scrollTimeout);
-            
-            // Remove previous scroll classes
-            document.body.classList.remove('scrolling-up', 'scrolling-down', 'toolbar-visible');
-            
-            if (currentScrollTop > lastScrollTop && currentScrollTop > 100) {
-                // Scrolling down - hide toolbars
-                document.body.classList.add('scrolling-down');
-            } else if (currentScrollTop < lastScrollTop) {
-                // Scrolling up - show toolbars
-                document.body.classList.add('scrolling-up');
+            // Auto-hide after 4 seconds if not in fullscreen and on mobile
+            const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement || 
+                                   document.mozFullScreenElement || document.msFullscreenElement);
+            if (!isFullscreen && window.innerWidth <= 768) {
+                controlsTimeout = setTimeout(() => {
+                    hideImageControls();
+                }, 4000);
             }
+        }
+        
+        function hideImageControls() {
+            const controls = document.querySelector('.image-controls');
+            if (!controls) return;
             
-            lastScrollTop = currentScrollTop;
-            
-            // Auto-show toolbars after scrolling stops
-            scrollTimeout = setTimeout(() => {
-                isScrolling = false;
-                document.body.classList.remove('scrolling-up', 'scrolling-down');
-                document.body.classList.add('toolbar-visible');
-                
-                // Hide again after 3 seconds if no interaction
-                setTimeout(() => {
-                    if (!isScrolling && window.pageYOffset > 100) {
-                        document.body.classList.remove('toolbar-visible');
-                        document.body.classList.add('scrolling-down');
+            controls.classList.remove('visible');
+            controls.classList.add('hidden');
+            imageControlsVisible = false;
+        }
+        
+        function toggleImageControls() {
+            if (imageControlsVisible) {
+                hideImageControls();
+            } else {
+                showImageControls();
+            }
+        }
+        
+        // Show/hide controls when user taps the image area
+        function initImageClickHandler() {
+            const imageWrap = document.querySelector('.viewer__image-wrap');
+            if (imageWrap) {
+                imageWrap.addEventListener('click', (e) => {
+                    // Only toggle on tap/click if not dragging and not pinching
+                    if (!isDragging && (!window.isPinching || !window.isPinching())) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleImageControls();
                     }
-                }, 3000);
-            }, 150);
-        }
-        
-        // Add scroll event listener with throttling
-        let ticking = false;
-        function requestTick() {
-            if (!ticking) {
-                requestAnimationFrame(() => {
-                    handleScrollDirection();
-                    ticking = false;
                 });
-                ticking = true;
             }
         }
         
-        window.addEventListener('scroll', requestTick, { passive: true });
+        // Initialize enhanced image functionality
+        addPinchZoom();
+        handleImageDrag();
+        initImageClickHandler();
         
-        // Show toolbars when user taps the image area
-        const imageWrap = document.querySelector('.viewer__image-wrap');
-        if (imageWrap) {
-            imageWrap.addEventListener('click', (e) => {
-                if (window.innerWidth <= 768) {
-                    e.preventDefault();
-                    document.body.classList.remove('scrolling-up', 'scrolling-down');
-                    document.body.classList.add('toolbar-visible');
-                    
-                    // Hide again after 3 seconds
-                    setTimeout(() => {
-                        if (window.pageYOffset > 100) {
-                            document.body.classList.remove('toolbar-visible');
-                            document.body.classList.add('scrolling-down');
-                        }
-                    }, 3000);
-                }
-            });
-        }
-        
-        // Handle orientation change
-        window.addEventListener('orientationchange', () => {
-            setTimeout(() => {
-                lastScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            }, 100);
-        });
+        // Show controls initially
+        showImageControls();
 
         // Initial render
                 renderList();
