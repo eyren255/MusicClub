@@ -47,8 +47,6 @@
         function getSongs(){ return collections[currentCollection] || []; }
 
         // Enhanced Image Viewer State
-        let panX = 0;
-        let panY = 0;
         let isFullscreen = false;
         
         /** Map human-readable titles to image filenames in folder `Sa Yar Ga Toe Pwell` */
@@ -126,7 +124,7 @@
                 zoomOutBtn: document.getElementById("zoomOutBtn"),
                 zoomResetBtn: document.getElementById("resetZoomBtn"),
                 // Loading elements
-                loadingOverlay: document.getElementById("loadingOverlay"),
+                loadingOverlay: document.getElementById("imageLoadingOverlay"),
                 zoomIndicator: document.getElementById("zoomIndicator"),
                 zoomLevel: document.getElementById("zoomLevel")
         };
@@ -231,8 +229,13 @@
                 elements.image.hidden = false;
                 
                 // Clear ready states before loading new image
-                elements.next.classList.remove('ready');
-                elements.prev.classList.remove('ready');
+                if (elements.next) elements.next.classList.remove('ready');
+                if (elements.prev) elements.prev.classList.remove('ready');
+                
+                // Reset zoom state for new image
+                currentZoom = 1;
+                imageTranslateX = 0;
+                imageTranslateY = 0;
                 
                 if(!src){
                         showFallback();
@@ -257,8 +260,20 @@
         preloadAdjacentImages();
                 // Update navigation state after preloading starts
                 setTimeout(() => updateNavigationState(), 100);
-                // Reset zoom when loading new image
-                applyZoom(1, true);
+                // Auto-fit image when loading new image - use onload for reliability
+                const autoFitOnLoad = () => {
+                    if (elements.image.naturalWidth && elements.image.naturalHeight) {
+                        fitToScreen();
+                    }
+                };
+                
+                // Bind to onload event for consistent behavior
+                elements.image.onload = autoFitOnLoad;
+                
+                // Also call immediately if image is already cached/complete
+                if (elements.image.complete && elements.image.naturalWidth) {
+                    autoFitOnLoad();
+                }
         }
 
         // Enhanced image preloading system
@@ -673,6 +688,17 @@
         document.getElementById('fullscreenBtn')?.addEventListener('click', toggleFullscreen);
         document.getElementById('fitToScreenBtn')?.addEventListener('click', fitToScreen);
         
+        // Window resize handler for responsive image fitting
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (elements.image && elements.image.naturalWidth) {
+                    fitToScreen();
+                }
+            }, 150);
+        });
+        
         // Initialize image dragging
         handleImageDrag();
         
@@ -861,7 +887,8 @@ function applyZoom(zoomLevel, reset = false) {
         imageTranslateX = 0;
         imageTranslateY = 0;
     } else {
-        currentZoom = Math.max(0.5, Math.min(5, zoomLevel));
+        // Respect the passed zoom level parameter
+        currentZoom = Math.max(0.5, Math.min(5, zoomLevel || currentZoom));
     }
 
     const img = elements.image;
@@ -869,7 +896,9 @@ function applyZoom(zoomLevel, reset = false) {
     const zoomLevelDisplay = document.getElementById('zoomLevelDisplay');
     const imageWrap = img.parentElement;
     
-    img.style.transform = `scale(${currentZoom}) translate(${imageTranslateX}px, ${imageTranslateY}px)`;
+    // Fix transform order: translate first, then scale (with transform-origin center)
+    img.style.transformOrigin = 'center center';
+    img.style.transform = `translate(${imageTranslateX}px, ${imageTranslateY}px) scale(${currentZoom})`;
     
     // Update zoom level displays
     const zoomPercentage = `${Math.round(currentZoom * 100)}%`;
@@ -980,26 +1009,22 @@ function fitToScreen() {
     const img = elements.image;
     const container = document.getElementById('imageContainer');
     
-    if (!img || !img.naturalWidth) return;
+    if (!img || !img.naturalWidth || !img.naturalHeight) return;
     
     const containerRect = container.getBoundingClientRect();
-    const imageAspect = img.naturalWidth / img.naturalHeight;
-    const containerAspect = containerRect.width / containerRect.height;
     
-    let targetZoom;
-    if (imageAspect > containerAspect) {
-        // Image is wider - fit to width
-        targetZoom = (containerRect.width * 0.9) / img.offsetWidth;
-    } else {
-        // Image is taller - fit to height  
-        targetZoom = (containerRect.height * 0.9) / img.offsetHeight;
-    }
+    // Calculate target zoom to fit image within container (90% of available space)
+    const targetZoom = Math.min(
+        (containerRect.width * 0.9) / img.naturalWidth,
+        (containerRect.height * 0.9) / img.naturalHeight
+    );
     
     // Reset position and apply zoom
     imageTranslateX = 0;
     imageTranslateY = 0;
-    applyZoom(Math.max(0.1, Math.min(5, targetZoom)));
-    showImageControls();
+    applyZoom(Math.max(0.5, Math.min(5, targetZoom)), true);
+    
+    if (window.showImageControls) showImageControls();
 }
 
 // Add pinch-to-zoom support for mobile with conflict prevention
@@ -1331,15 +1356,29 @@ document.addEventListener('mozfullscreenchange', handleFullscreenChange);
 document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
 function handleFullscreenChange() {
-    const viewer = document.querySelector('.viewer');
-    const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement || 
+    const imageContainer = document.getElementById('imageContainer');
+    const browserIsFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement || 
                            document.mozFullScreenElement || document.msFullscreenElement);
     
+    // Sync our internal state with browser fullscreen state
+    isFullscreen = browserIsFullscreen;
+    
+    // Toggle CSS class for fallback styling
+    if (imageContainer) {
+        imageContainer.classList.toggle('fullscreen-mode', browserIsFullscreen);
+    }
+    
+    // Update controls visibility and refit image for new viewport
     if (isFullscreen) {
-        viewer.classList.add('fullscreen');
-        showImageControls();
-    } else {
-        viewer.classList.remove('fullscreen');
+        if (window.showImageControls) {
+            showImageControls();
+        }
+        // Refit image to new fullscreen viewport
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                fitToScreen();
+            });
+        });
     }
 }
 

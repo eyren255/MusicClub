@@ -1329,8 +1329,8 @@ body{
     -ms-user-select:none;
 }
 
-/* Fullscreen Mode */
-.fullscreen-mode{
+/* Fullscreen Mode - Scoped to image container only */
+.viewer__image-wrap.fullscreen-mode{
     position:fixed !important;
     top:0 !important;
     left:0 !important;
@@ -1341,15 +1341,18 @@ body{
     margin:0 !important;
     padding:20px !important;
     box-sizing:border-box !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
 }
 
-.fullscreen-mode img{
+.viewer__image-wrap.fullscreen-mode img{
     max-width:100% !important;
     max-height:100% !important;
     object-fit:contain !important;
 }
 
-.fullscreen-mode .image-controls-overlay{
+.viewer__image-wrap.fullscreen-mode .image-controls-overlay{
     top:20px !important;
     right:20px !important;
 }
