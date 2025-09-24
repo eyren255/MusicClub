@@ -1,26 +1,26 @@
 :root{
-    /* Modern enhanced design system */
-    --bg: #fafbfc;
-    --bg-secondary: #f5f7fa;
-    --panel: #ffffff;
-    --panel-elevated: #ffffff;
-    --panel-accent: #f8fafc;
-    --text: #1a202c;
-    --text-secondary: #4a5568;
-    --text-muted: #718096;
-    --text-bright: #1a202c;
+    /* Dark theme design system */
+    --bg: #0f1419;
+    --bg-secondary: #1a202c;
+    --panel: #1a202c;
+    --panel-elevated: #2d3748;
+    --panel-accent: #2d3748;
+    --text: #f7fafc;
+    --text-secondary: #e2e8f0;
+    --text-muted: #a0aec0;
+    --text-bright: #ffffff;
     --primary: #667eea;
     --primary-dark: #5a67d8;
     --primary-light: #e2e8f0;
     --primary-soft: rgba(102, 126, 234, 0.1);
     --accent: #764ba2;
     --accent-soft: rgba(118, 75, 162, 0.1);
-    --border: #e2e8f0;
-    --border-light: #f1f5f9;
-    --border-focus: #cbd5e0;
-    --shadow: rgba(0, 0, 0, 0.08);
-    --shadow-medium: rgba(0, 0, 0, 0.12);
-    --shadow-large: rgba(0, 0, 0, 0.16);
+    --border: #2d3748;
+    --border-light: #4a5568;
+    --border-focus: #4a5568;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --shadow-medium: rgba(0, 0, 0, 0.4);
+    --shadow-large: rgba(0, 0, 0, 0.5);
     --success: #48bb78;
     --warning: #ed8936;
     --error: #f56565;
@@ -34,25 +34,6 @@
     --spacing-md: 1rem;
     --spacing-lg: 1.5rem;
     --spacing-xl: 2rem;
-}
-
-/* Dark theme override */
-[data-theme="dark"]{
-    --bg: #0f1419;
-    --bg-secondary: #1a202c;
-    --panel: #1a202c;
-    --panel-elevated: #2d3748;
-    --panel-accent: #2d3748;
-    --text: #f7fafc;
-    --text-secondary: #e2e8f0;
-    --text-muted: #a0aec0;
-    --text-bright: #ffffff;
-    --border: #2d3748;
-    --border-light: #4a5568;
-    --border-focus: #4a5568;
-    --shadow: rgba(0, 0, 0, 0.3);
-    --shadow-medium: rgba(0, 0, 0, 0.4);
-    --shadow-large: rgba(0, 0, 0, 0.5);
 }
 [data-theme="light"]{ --bg:#f8faf8; --panel:#ffffff; --text:#0e1510; --muted:#5d6a60; --border:#e5efe7; }
 [data-reduce-motion] *{ animation:none!important; transition:none!important }
