@@ -523,7 +523,7 @@ body{
     filter:none;
 }
 .viewer__image-wrap{position:relative}
-.viewer__controls{display:none}
+.viewer__controls{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px}
 .viewer__image-wrap.zoomed img{cursor:grab}
 .viewer__image-wrap img{will-change:transform}
 
