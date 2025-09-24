@@ -39,7 +39,7 @@
 
         <!-- Simplified Top Controls -->
         <div class="app__top-controls">
-            <button id="toggleListBtn" class="btn btn--ghost list-toggle" aria-expanded="true" aria-controls="songListPanel" title="Show/Hide Songs (L)">
+            <button id="toggleListBtn" class="btn btn--ghost list-toggle" aria-expanded="false" aria-controls="songListPanel" title="Show Songs (L)">
                 <span class="list-toggle__icon">☰</span>
                 <span class="list-toggle__text">Songs</span>
             </button>
@@ -47,7 +47,6 @@
                 <div class="current-song__collection" id="currentCollection">Sa Yar Ga Toe Pwell</div>
                 <div class="current-song__position" id="songPosition">1 / 35</div>
             </div>
-            <button id="moreMenuBtn" class="btn btn--ghost" title="More options">⋯</button>
         </div>
 
         <!-- Floating Zoom Controls -->
@@ -58,7 +57,11 @@
         </div>
 
         <main class="app__main">
-            <aside id="songListPanel" class="sidebar" aria-label="Song list">
+            <aside id="songListPanel" class="sidebar sidebar--hidden" aria-label="Song list">
+                <div class="sidebar__header">
+                    <h3 class="sidebar__title">Song Collection</h3>
+                    <button id="closeSidebarBtn" class="btn btn--ghost btn--small" aria-label="Close list" title="Close (Esc)">✕</button>
+                </div>
                 <div class="sidebar__search">
                     <div class="search-input-wrapper">
                         <input id="searchInput" type="search" placeholder="Search songs or number…" aria-label="Search songs or number">
@@ -119,6 +122,9 @@
             </section>
         </main>
 
+        <!-- Sidebar Overlay -->
+        <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
         <!-- Bottom Navigation -->
         <nav class="bottom-nav" id="bottomNav">
             <button id="prevBtn" class="bottom-nav__btn" aria-label="Previous song" title="Previous (←)">
@@ -137,9 +143,9 @@
                 <span class="bottom-nav__icon">🎲</span>
                 <span class="bottom-nav__label">Random</span>
             </button>
-            <button id="fullscreenBtn" class="bottom-nav__btn" title="Fullscreen">
-                <span class="bottom-nav__icon">⛶</span>
-                <span class="bottom-nav__label">Fullscreen</span>
+            <button id="moreMenuBtn" class="bottom-nav__btn" title="More options">
+                <span class="bottom-nav__icon">⋯</span>
+                <span class="bottom-nav__label">More</span>
             </button>
         </nav>
 

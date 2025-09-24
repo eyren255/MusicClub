@@ -221,6 +221,183 @@
         }
     }
     
+    // Sidebar functionality
+    function initSidebar() {
+        const toggleListBtn = document.getElementById('toggleListBtn');
+        const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+        const sidebarPanel = document.getElementById('songListPanel');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        
+        function openSidebar() {
+            if(sidebarPanel && sidebarOverlay) {
+                sidebarPanel.classList.remove('sidebar--hidden');
+                sidebarPanel.classList.add('is-open');
+                sidebarOverlay.classList.add('is-visible');
+                if(toggleListBtn) {
+                    toggleListBtn.setAttribute('aria-expanded', 'true');
+                    toggleListBtn.title = 'Hide Songs (L)';
+                }
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        function closeSidebar() {
+            if(sidebarPanel && sidebarOverlay) {
+                sidebarPanel.classList.add('sidebar--hidden');
+                sidebarPanel.classList.remove('is-open');
+                sidebarOverlay.classList.remove('is-visible');
+                if(toggleListBtn) {
+                    toggleListBtn.setAttribute('aria-expanded', 'false');
+                    toggleListBtn.title = 'Show Songs (L)';
+                }
+                document.body.style.overflow = '';
+            }
+        }
+        
+        // Toggle sidebar
+        if(toggleListBtn) {
+            toggleListBtn.addEventListener('click', function() {
+                const isOpen = sidebarPanel && sidebarPanel.classList.contains('is-open');
+                if(isOpen) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
+            });
+        }
+        
+        // Close sidebar button
+        if(closeSidebarBtn) {
+            closeSidebarBtn.addEventListener('click', closeSidebar);
+        }
+        
+        // Close sidebar when clicking overlay
+        if(sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', closeSidebar);
+        }
+        
+        // Add Escape key handling to existing keyboard handler
+        const originalHandleGlobalKeydown = handleGlobalKeydown;
+        handleGlobalKeydown = function(e) {
+            // Handle Escape for sidebar
+            if(e.key === 'Escape' && sidebarPanel && sidebarPanel.classList.contains('is-open')) {
+                e.preventDefault();
+                closeSidebar();
+                return;
+            }
+            
+            // Call original handler
+            return originalHandleGlobalKeydown(e);
+        };
+    }
+    
+    // Always-draggable photos functionality
+    function initAlwaysDraggablePhotos() {
+        const imageWrap = document.querySelector('.viewer__image-wrap');
+        const songImage = document.getElementById('songImage');
+        
+        if(imageWrap && songImage) {
+            let isDragging = false;
+            let startX, startY, currentTransform = {x: 0, y: 0};
+            
+            function startDrag(e) {
+                isDragging = true;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                startX = clientX - currentTransform.x;
+                startY = clientY - currentTransform.y;
+                songImage.style.cursor = 'grabbing';
+            }
+            
+            function drag(e) {
+                if(!isDragging) return;
+                e.preventDefault();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                currentTransform.x = clientX - startX;
+                currentTransform.y = clientY - startY;
+                songImage.style.transform = `translate(${currentTransform.x}px, ${currentTransform.y}px)`;
+            }
+            
+            function stopDrag() {
+                isDragging = false;
+                songImage.style.cursor = 'grab';
+            }
+            
+            // Mouse events
+            songImage.addEventListener('mousedown', startDrag);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', stopDrag);
+            
+            // Touch events
+            songImage.addEventListener('touchstart', startDrag, {passive: false});
+            document.addEventListener('touchmove', drag, {passive: false});
+            document.addEventListener('touchend', stopDrag);
+            
+            // Reset position when changing songs
+            function resetImagePosition() {
+                currentTransform = {x: 0, y: 0};
+                if(songImage) {
+                    songImage.style.transform = 'translate(0px, 0px)';
+                }
+            }
+            
+            // Hook into song changes if available
+            setTimeout(() => {
+                if(window.selectIndex) {
+                    const originalSelectIndex = window.selectIndex;
+                    window.selectIndex = function(...args) {
+                        resetImagePosition();
+                        return originalSelectIndex.apply(this, args);
+                    };
+                }
+            }, 500);
+        }
+    }
+    
+    // Enhanced bottom navigation functionality
+    function initBottomNavigation() {
+        // Update favorite button visual state in bottom nav (with safety check)
+        function updateBottomNavFavorite() {
+            const favBtn = document.getElementById('favToggle');
+            const iconElement = favBtn && favBtn.querySelector('.bottom-nav__icon');
+            if(favBtn && iconElement) {
+                const favorites = typeof window.getFavorites === 'function' ? window.getFavorites() : [];
+                const isFav = typeof window.currentIndex !== 'undefined' && favorites.includes(window.currentIndex);
+                
+                favBtn.classList.toggle('is-favorite', isFav);
+                iconElement.textContent = isFav ? '❤' : '♡';
+            }
+        }
+        
+        // Update bottom nav favorite when the page loads
+        setTimeout(updateBottomNavFavorite, 200);
+        
+        // Hook into existing updateFavUi function if available
+        setTimeout(() => {
+            if(typeof window.updateFavUi === 'function') {
+                const originalUpdateFavUi = window.updateFavUi;
+                window.updateFavUi = function() {
+                    originalUpdateFavUi();
+                    updateBottomNavFavorite();
+                };
+            }
+        }, 300);
+        
+        // Add haptic feedback for mobile interactions
+        function addHapticFeedback() {
+            if('vibrate' in navigator) {
+                navigator.vibrate(50);
+            }
+        }
+        
+        // Add haptic feedback to bottom nav buttons
+        const bottomNavBtns = document.querySelectorAll('.bottom-nav__btn');
+        bottomNavBtns.forEach(btn => {
+            btn.addEventListener('click', addHapticFeedback);
+        });
+    }
+
     // Initialize navigation features
     function init() {
         // Back to Top
@@ -254,6 +431,15 @@
         
         // Add shortcut tooltips
         addShortcutTooltips();
+        
+        // New Sidebar functionality
+        initSidebar();
+        
+        // Always-draggable photos
+        initAlwaysDraggablePhotos();
+        
+        // Enhanced bottom navigation with favorite updates  
+        initBottomNavigation();
         
         // Accessibility improvements
         document.querySelectorAll('a, button').forEach(element => {

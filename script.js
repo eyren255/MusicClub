@@ -1310,37 +1310,9 @@ function handleFullscreenChange() {
             });
         }
         
-        // Update favorite button visual state in bottom nav
-        function updateBottomNavFavorite(){
-            const favBtn = document.getElementById('favToggle');
-            if(favBtn){
-                const favorites = getFavorites();
-                const isFav = favorites.includes(currentIndex);
-                
-                favBtn.classList.toggle('is-favorite', isFav);
-                favBtn.querySelector('.bottom-nav__icon').textContent = isFav ? '❤' : '♡';
-            }
-        }
+        // Bottom nav favorite updates are now handled by navigation.js
         
-        // Override updateFavUi to also update bottom nav
-        const originalUpdateFavUi = updateFavUi;
-        updateFavUi = function(){
-            originalUpdateFavUi();
-            updateBottomNavFavorite();
-        };
-        
-        // Add haptic feedback for mobile interactions (if supported)
-        function addHapticFeedback(){
-            if('vibrate' in navigator){
-                navigator.vibrate(50);
-            }
-        }
-        
-        // Add haptic feedback to bottom nav buttons
-        const bottomNavBtns = document.querySelectorAll('.bottom-nav__btn');
-        bottomNavBtns.forEach(btn => {
-            btn.addEventListener('click', addHapticFeedback);
-        });
+        // Haptic feedback is now handled by navigation.js
         
         // Enhanced touch gestures for song navigation
         let touchStartXNav = null;
