@@ -46,6 +46,11 @@
         let currentCollection = "Sa Yar Ga Toe Pwell";
         function getSongs(){ return collections[currentCollection] || []; }
 
+        // Enhanced Image Viewer State
+        let panX = 0;
+        let panY = 0;
+        let isFullscreen = false;
+        
         /** Map human-readable titles to image filenames in folder `Sa Yar Ga Toe Pwell` */
         const filenameByTitle = {
                 "စတော်ဘယ်ရီချစ်သဲချင်": "Sa Yar Ga Toe Pwell/စတော်ဘယ်ရီချစ်သဲချင်.png",
@@ -468,6 +473,8 @@
             const counter = document.getElementById('searchResults');
             const countSpan = document.getElementById('searchCount');
             
+            if (!counter || !countSpan) return; // Safety check for missing elements
+            
             if (elements.search.value.trim() === '') {
                 counter.hidden = true;
                 return;
@@ -664,6 +671,7 @@
         document.getElementById('zoomOutBtn')?.addEventListener('click', zoomOut);
         document.getElementById('resetZoomBtn')?.addEventListener('click', resetZoom);
         document.getElementById('fullscreenBtn')?.addEventListener('click', toggleFullscreen);
+        document.getElementById('fitToScreenBtn')?.addEventListener('click', fitToScreen);
         
         // Initialize image dragging
         handleImageDrag();
@@ -677,6 +685,12 @@
                 case '-': e.preventDefault(); zoomOut(); break;
                 case '0': e.preventDefault(); resetZoom(); break;
                 case 'F11': e.preventDefault(); toggleFullscreen(); break;
+            }
+            
+            // Ctrl+0 for fit to screen
+            if (e.ctrlKey && e.key === '0') {
+                e.preventDefault();
+                fitToScreen();
             }
         });
         
@@ -852,18 +866,29 @@ function applyZoom(zoomLevel, reset = false) {
 
     const img = elements.image;
     const zoomIndicator = document.getElementById('zoomIndicator');
+    const zoomLevelDisplay = document.getElementById('zoomLevelDisplay');
     const imageWrap = img.parentElement;
     
     img.style.transform = `scale(${currentZoom}) translate(${imageTranslateX}px, ${imageTranslateY}px)`;
     
+    // Update zoom level displays
+    const zoomPercentage = `${Math.round(currentZoom * 100)}%`;
+    if (document.getElementById('zoomLevel')) {
+        document.getElementById('zoomLevel').textContent = zoomPercentage;
+    }
+    if (zoomLevelDisplay) {
+        zoomLevelDisplay.textContent = zoomPercentage;
+    }
+    
     // Show zoom indicator when zoomed
     if (currentZoom !== 1) {
-        zoomIndicator.hidden = false;
-        document.getElementById('zoomLevel').textContent = `${Math.round(currentZoom * 100)}%`;
+        if (zoomIndicator) {
+            zoomIndicator.hidden = false;
+            setTimeout(() => { zoomIndicator.hidden = true; }, 2000);
+        }
         imageWrap.classList.add('zoomed');
-        setTimeout(() => { zoomIndicator.hidden = true; }, 2000);
     } else {
-        zoomIndicator.hidden = true;
+        if (zoomIndicator) zoomIndicator.hidden = true;
         imageWrap.classList.remove('zoomed');
     }
 }
@@ -895,6 +920,86 @@ function zoomOut() {
 function resetZoom() {
     applyZoom(1, true);
     showImageControls(); // Show controls when resetting
+}
+
+// Enhanced fullscreen functionality
+function toggleFullscreen() {
+    const imageContainer = document.getElementById('imageContainer');
+    
+    if (!isFullscreen) {
+        // Enter fullscreen
+        isFullscreen = true;
+        imageContainer.classList.add('fullscreen-mode');
+        document.body.style.overflow = 'hidden';
+        
+        // Try to use browser fullscreen API if available
+        if (imageContainer.requestFullscreen) {
+            imageContainer.requestFullscreen().catch(() => {
+                // Fallback to CSS fullscreen if browser fullscreen fails
+            });
+        } else if (imageContainer.webkitRequestFullscreen) {
+            imageContainer.webkitRequestFullscreen();
+        } else if (imageContainer.msRequestFullscreen) {
+            imageContainer.msRequestFullscreen();
+        }
+        
+        // Update button icon
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        if (fullscreenBtn) fullscreenBtn.innerHTML = '⛶';
+        
+        showImageControls();
+    } else {
+        // Exit fullscreen
+        exitFullscreen();
+    }
+}
+
+function exitFullscreen() {
+    const imageContainer = document.getElementById('imageContainer');
+    
+    isFullscreen = false;
+    imageContainer.classList.remove('fullscreen-mode');
+    document.body.style.overflow = '';
+    
+    // Exit browser fullscreen if active
+    if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+    } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+    }
+    
+    // Update button icon
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    if (fullscreenBtn) fullscreenBtn.innerHTML = '⛶';
+}
+
+// Fit image to screen while maintaining aspect ratio
+function fitToScreen() {
+    const img = elements.image;
+    const container = document.getElementById('imageContainer');
+    
+    if (!img || !img.naturalWidth) return;
+    
+    const containerRect = container.getBoundingClientRect();
+    const imageAspect = img.naturalWidth / img.naturalHeight;
+    const containerAspect = containerRect.width / containerRect.height;
+    
+    let targetZoom;
+    if (imageAspect > containerAspect) {
+        // Image is wider - fit to width
+        targetZoom = (containerRect.width * 0.9) / img.offsetWidth;
+    } else {
+        // Image is taller - fit to height  
+        targetZoom = (containerRect.height * 0.9) / img.offsetHeight;
+    }
+    
+    // Reset position and apply zoom
+    imageTranslateX = 0;
+    imageTranslateY = 0;
+    applyZoom(Math.max(0.1, Math.min(5, targetZoom)));
+    showImageControls();
 }
 
 // Add pinch-to-zoom support for mobile with conflict prevention

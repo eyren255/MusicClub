@@ -65,7 +65,7 @@
             <!-- Main Viewer -->
             <main class="viewer">
                 <!-- Image Display -->
-                <div class="viewer__image-wrap">
+                <div class="viewer__image-wrap" id="imageContainer">
                     <img id="songImage" alt="Selected song sheet music" />
                     
                     <!-- Image Fallback -->
@@ -83,6 +83,16 @@
                     <!-- Zoom Indicator -->
                     <div class="zoom-indicator" id="zoomIndicator" hidden>
                         <span id="zoomLevel">100%</span>
+                    </div>
+                    
+                    <!-- Enhanced Image Controls Overlay -->
+                    <div class="image-controls-overlay" id="imageControlsOverlay">
+                        <button id="fullscreenBtn" class="image-control-btn" title="Toggle Fullscreen (F11)">
+                            ⛶
+                        </button>
+                        <button id="fitToScreenBtn" class="image-control-btn" title="Fit to Screen (Ctrl+0)">
+                            ⊞
+                        </button>
                     </div>
                 </div>
                 
@@ -115,11 +125,12 @@
                     </button>
                 </div>
                 
-                <!-- Zoom Controls -->
+                <!-- Enhanced Zoom Controls -->
                 <div class="zoom-controls" id="zoomControls">
                     <button id="zoomOutBtn" class="zoom-btn" title="Zoom Out (-)">−</button>
                     <button id="resetZoomBtn" class="zoom-btn" title="Reset Zoom (0)">↻</button>
                     <button id="zoomInBtn" class="zoom-btn" title="Zoom In (+)">+</button>
+                    <div class="zoom-level-display" id="zoomLevelDisplay">100%</div>
                 </div>
                 
             </main>

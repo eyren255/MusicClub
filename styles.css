@@ -495,13 +495,14 @@ body{
 .viewer__image-wrap img{
     max-width:100%;
     height:auto;
-    max-height:90svh;
-    border-radius:16px;
+    max-height:85vh;
+    border-radius:12px;
     border:2px solid var(--border-light);
     background:linear-gradient(135deg, #0d1410, #111a14);
     display:block;
-    box-shadow:0 8px 32px var(--shadow), 0 0 20px rgba(74, 191, 106, 0.1);
+    box-shadow:0 12px 48px var(--shadow), 0 0 30px rgba(74, 191, 106, 0.15);
     transition:all 0.3s ease;
+    transform-origin:center center;
 }
 .viewer__image-wrap img:hover{
     transform:scale(1.02);
@@ -1246,6 +1247,140 @@ body{
     color:white;
     transform:scale(1.05);
     box-shadow:0 6px 20px var(--shadow);
+}
+
+.zoom-level-display{
+    background:rgba(17, 26, 20, 0.9);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:4px 8px;
+    color:var(--text);
+    font-size:12px;
+    font-weight:600;
+    text-align:center;
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    box-shadow:0 2px 8px var(--shadow-soft);
+    min-width:50px;
+}
+
+/* Enhanced Image Controls Overlay */
+.image-controls-overlay{
+    position:absolute;
+    top:12px;
+    right:12px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    z-index:10;
+    opacity:0;
+    transition:opacity 0.3s ease;
+    pointer-events:none;
+}
+
+.viewer__image-wrap:hover .image-controls-overlay,
+.image-controls-overlay:hover{
+    opacity:1;
+    pointer-events:auto;
+}
+
+.image-control-btn{
+    width:40px;
+    height:40px;
+    border-radius:20px;
+    background:rgba(17, 26, 20, 0.95);
+    border:1px solid var(--border);
+    color:var(--text);
+    font-size:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:all 0.2s ease;
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    box-shadow:0 4px 12px var(--shadow-soft);
+}
+
+.image-control-btn:hover{
+    background:var(--primary);
+    color:white;
+    transform:scale(1.05);
+    box-shadow:0 6px 20px var(--shadow);
+}
+
+/* Enhanced Image Container for Better Focus */
+.viewer__image-wrap{
+    position:relative;
+    background:radial-gradient(ellipse at center, rgba(74, 191, 106, 0.03), transparent);
+    overflow:hidden;
+    cursor:grab;
+}
+
+.viewer__image-wrap.dragging{
+    cursor:grabbing;
+}
+
+.viewer__image-wrap img{
+    transition:transform 0.2s ease;
+    user-select:none;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+}
+
+/* Fullscreen Mode */
+.fullscreen-mode{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    width:100vw !important;
+    height:100vh !important;
+    z-index:9999 !important;
+    background:var(--bg) !important;
+    margin:0 !important;
+    padding:20px !important;
+    box-sizing:border-box !important;
+}
+
+.fullscreen-mode img{
+    max-width:100% !important;
+    max-height:100% !important;
+    object-fit:contain !important;
+}
+
+.fullscreen-mode .image-controls-overlay{
+    top:20px !important;
+    right:20px !important;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px){
+    .image-controls-overlay{
+        top:8px;
+        right:8px;
+        gap:6px;
+    }
+    
+    .image-control-btn{
+        width:36px;
+        height:36px;
+        font-size:14px;
+    }
+    
+    .viewer__image-wrap{
+        padding:8px;
+    }
+    
+    .zoom-controls{
+        right:8px;
+        gap:6px;
+    }
+    
+    .zoom-btn{
+        width:40px;
+        height:40px;
+    }
 }
 
 .zoom-btn:active{
