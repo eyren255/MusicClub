@@ -50,6 +50,195 @@ body{
 @-webkit-keyframes fadeIn{from{opacity:0;-webkit-transform:scale(.98)}to{opacity:1;-webkit-transform:scale(1)}}
 @-webkit-keyframes slideUp{from{opacity:0;-webkit-transform:translateY(8px)}to{opacity:1;-webkit-transform:translateY(0)}}
 @-webkit-keyframes pulseIn{from{opacity:0;-webkit-transform:scale(.96)}to{opacity:1;-webkit-transform:scale(1)}}
+/* Sidebar Overlay */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 40;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.sidebar-overlay.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Improved Sidebar */
+.sidebar {
+    transition: transform 0.3s ease;
+}
+
+.sidebar--hidden {
+    transform: translateX(-100%);
+}
+
+.sidebar.is-open {
+    transform: translateX(0);
+}
+
+/* Collection Stats */
+.sidebar__stats {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.875rem;
+    color: var(--muted);
+}
+
+.stats-text {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Bottom Navigation for Mobile */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--panel);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-around;
+    padding: 0.5rem;
+    z-index: 50;
+    box-shadow: 0 -4px 12px var(--shadow-soft);
+    display: none; /* Hidden by default, shown on mobile */
+}
+
+.bottom-nav__btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    background: none;
+    border: none;
+    color: var(--muted);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    min-width: 3rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.bottom-nav__btn:hover,
+.bottom-nav__btn:focus {
+    color: var(--text);
+    background: var(--panel-light);
+}
+
+.bottom-nav__btn.is-favorite {
+    color: var(--primary);
+}
+
+.bottom-nav__icon {
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.bottom-nav__label {
+    font-size: 0.75rem;
+    line-height: 1;
+    font-weight: 500;
+}
+
+/* Mobile Responsive Improvements */
+@media (max-width: 768px) {
+    /* Show bottom navigation on mobile */
+    .bottom-nav {
+        display: flex;
+    }
+    
+    /* Hide desktop controls on mobile */
+    .viewer__controls {
+        display: none;
+    }
+    
+    /* Adjust main content for bottom nav */
+    .viewer {
+        padding-bottom: 5rem; /* Space for bottom nav */
+    }
+    
+    /* Improve sidebar on mobile */
+    .sidebar {
+        width: 85vw;
+        max-width: 320px;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 45;
+        background: var(--panel);
+        border-right: 1px solid var(--border);
+    }
+    
+    /* Better touch targets */
+    .tab, .btn, .song-item {
+        min-height: 44px; /* iOS recommended touch target */
+        padding: 0.75rem 1rem;
+    }
+    
+    /* Improve header on mobile */
+    .app__header {
+        padding: 0.75rem 1rem;
+    }
+    
+    .brand__logo {
+        width: 2rem;
+        height: 2rem;
+    }
+    
+    /* Better zoom controls on mobile */
+    .zoom-controls {
+        position: fixed;
+        top: 50%;
+        right: 1rem;
+        transform: translateY(-50%);
+        flex-direction: column;
+        gap: 0.5rem;
+        z-index: 30;
+    }
+    
+    .zoom-btn {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        font-size: 1.25rem;
+    }
+}
+
+/* Desktop Improvements */
+@media (min-width: 769px) {
+    /* Hide bottom nav on desktop */
+    .bottom-nav {
+        display: none;
+    }
+    
+    /* Better hover states */
+    .sidebar {
+        transition: width 0.3s ease;
+    }
+    
+    .viewer__controls button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px var(--shadow-soft);
+    }
+    
+    /* Improved keyboard focus indicators */
+    .btn:focus-visible,
+    .tab:focus-visible,
+    .song-item:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+    }
+}
+
 /* Respect reduced motion but keep lightweight decorative EQ animation */
 @media (prefers-reduced-motion: reduce){
     .card, .song-item, .viewer__controls, .viewer__image-wrap img, .app__toolbar, .loading-spinner {

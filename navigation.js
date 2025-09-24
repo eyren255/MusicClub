@@ -221,7 +221,7 @@
         }
     }
     
-    // Sidebar functionality
+    // Enhanced Sidebar functionality
     function initSidebar() {
         const toggleListBtn = document.getElementById('toggleListBtn');
         const closeSidebarBtn = document.getElementById('closeSidebarBtn');
@@ -229,25 +229,34 @@
         const sidebarOverlay = document.getElementById('sidebarOverlay');
         
         function openSidebar() {
-            if(sidebarPanel && sidebarOverlay) {
+            if(sidebarPanel) {
                 sidebarPanel.classList.remove('sidebar--hidden');
                 sidebarPanel.classList.add('is-open');
-                sidebarOverlay.classList.add('is-visible');
+                if(sidebarOverlay) {
+                    sidebarOverlay.classList.add('is-visible');
+                }
                 if(toggleListBtn) {
                     toggleListBtn.setAttribute('aria-expanded', 'true');
+                    toggleListBtn.innerHTML = '✕ Close';
                     toggleListBtn.title = 'Hide Songs (L)';
                 }
-                document.body.style.overflow = 'hidden';
+                // Only prevent body scroll on mobile
+                if(window.innerWidth <= 768) {
+                    document.body.style.overflow = 'hidden';
+                }
             }
         }
         
         function closeSidebar() {
-            if(sidebarPanel && sidebarOverlay) {
+            if(sidebarPanel) {
                 sidebarPanel.classList.add('sidebar--hidden');
                 sidebarPanel.classList.remove('is-open');
-                sidebarOverlay.classList.remove('is-visible');
+                if(sidebarOverlay) {
+                    sidebarOverlay.classList.remove('is-visible');
+                }
                 if(toggleListBtn) {
                     toggleListBtn.setAttribute('aria-expanded', 'false');
+                    toggleListBtn.innerHTML = '☰ Songs';
                     toggleListBtn.title = 'Show Songs (L)';
                 }
                 document.body.style.overflow = '';
@@ -357,16 +366,58 @@
     
     // Enhanced bottom navigation functionality
     function initBottomNavigation() {
-        // Update favorite button visual state in bottom nav (with safety check)
+        // Get bottom navigation elements
+        const bottomPrevBtn = document.getElementById('bottomPrevBtn');
+        const bottomNextBtn = document.getElementById('bottomNextBtn');
+        const bottomFavBtn = document.getElementById('bottomFavBtn');
+        const bottomRandomBtn = document.getElementById('bottomRandomBtn');
+        const bottomFullscreenBtn = document.getElementById('bottomFullscreenBtn');
+        
+        // Connect bottom nav to existing functions
+        if(bottomPrevBtn) {
+            bottomPrevBtn.addEventListener('click', () => {
+                const prevBtn = document.getElementById('prevBtn');
+                if(prevBtn) prevBtn.click();
+            });
+        }
+        
+        if(bottomNextBtn) {
+            bottomNextBtn.addEventListener('click', () => {
+                const nextBtn = document.getElementById('nextBtn');
+                if(nextBtn) nextBtn.click();
+            });
+        }
+        
+        if(bottomFavBtn) {
+            bottomFavBtn.addEventListener('click', () => {
+                const favBtn = document.getElementById('favToggle');
+                if(favBtn) favBtn.click();
+            });
+        }
+        
+        if(bottomRandomBtn) {
+            bottomRandomBtn.addEventListener('click', () => {
+                const randomBtn = document.getElementById('randomBtn');
+                if(randomBtn) randomBtn.click();
+            });
+        }
+        
+        if(bottomFullscreenBtn) {
+            bottomFullscreenBtn.addEventListener('click', () => {
+                const fullscreenBtn = document.getElementById('fullscreenBtn');
+                if(fullscreenBtn) fullscreenBtn.click();
+            });
+        }
+        
+        // Update favorite button visual state in bottom nav
         function updateBottomNavFavorite() {
-            const favBtn = document.getElementById('favToggle');
-            const iconElement = favBtn && favBtn.querySelector('.bottom-nav__icon');
-            if(favBtn && iconElement) {
+            const bottomFavIcon = bottomFavBtn && bottomFavBtn.querySelector('.bottom-nav__icon');
+            if(bottomFavIcon) {
                 const favorites = typeof window.getFavorites === 'function' ? window.getFavorites() : [];
                 const isFav = typeof window.currentIndex !== 'undefined' && favorites.includes(window.currentIndex);
                 
-                favBtn.classList.toggle('is-favorite', isFav);
-                iconElement.textContent = isFav ? '❤' : '♡';
+                bottomFavBtn.classList.toggle('is-favorite', isFav);
+                bottomFavIcon.textContent = isFav ? '♥' : '♡';
             }
         }
         
@@ -396,6 +447,62 @@
         bottomNavBtns.forEach(btn => {
             btn.addEventListener('click', addHapticFeedback);
         });
+        
+        // Export function for use by script.js
+        window.updateBottomNavFavorite = updateBottomNavFavorite;
+        
+        // Initial update
+        setTimeout(updateBottomNavFavorite, 500);
+    }
+    
+    // Enhanced touch gestures for mobile
+    function initTouchGestures() {
+        const imageContainer = document.getElementById('imageContainer');
+        if(!imageContainer) return;
+        
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchEndX = 0;
+        let touchEndY = 0;
+        
+        function handleTouchStart(e) {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }
+        
+        function handleTouchEnd(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            touchEndY = e.changedTouches[0].screenY;
+            handleSwipeGesture();
+        }
+        
+        function handleSwipeGesture() {
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+            const minSwipeDistance = 50;
+            
+            // Only process if horizontal swipe is longer than vertical
+            if(Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
+                if(deltaX > 0) {
+                    // Swipe right - previous song
+                    const prevBtn = document.getElementById('prevBtn');
+                    if(prevBtn) {
+                        prevBtn.click();
+                        addHapticFeedback();
+                    }
+                } else {
+                    // Swipe left - next song
+                    const nextBtn = document.getElementById('nextBtn');
+                    if(nextBtn) {
+                        nextBtn.click();
+                        addHapticFeedback();
+                    }
+                }
+            }
+        }
+        
+        imageContainer.addEventListener('touchstart', handleTouchStart, { passive: true });
+        imageContainer.addEventListener('touchend', handleTouchEnd, { passive: true });
     }
 
     // Initialize navigation features
@@ -440,6 +547,9 @@
         
         // Enhanced bottom navigation with favorite updates  
         initBottomNavigation();
+        
+        // Touch gestures for mobile
+        initTouchGestures();
         
         // Accessibility improvements
         document.querySelectorAll('a, button').forEach(element => {

@@ -32,8 +32,11 @@
         <!-- Main Content -->
         <div class="app__content">
             
+            <!-- Sidebar Overlay for Mobile -->
+            <div id="sidebarOverlay" class="sidebar-overlay"></div>
+            
             <!-- Song List Sidebar -->
-            <aside id="songListPanel" class="sidebar">
+            <aside id="songListPanel" class="sidebar sidebar--hidden">
                 <div class="sidebar__header">
                     <h3 class="sidebar__title">Song Collection</h3>
                     <button id="closeSidebarBtn" class="btn btn--ghost btn--small" aria-label="Close list">✕</button>
@@ -56,6 +59,11 @@
                 <div class="sidebar__tabs" role="tablist" aria-label="Collections">
                     <button id="colSaYar" class="tab is-active" role="tab" aria-selected="true">Sa Yar Ga Toe Pwell</button>
                     <button id="colMusicList" class="tab" role="tab" aria-selected="false">Music Club Song List</button>
+                </div>
+                
+                <!-- Collection Stats -->
+                <div class="sidebar__stats">
+                    <span id="collectionStats" class="stats-text">35 songs available</span>
                 </div>
                 
                 <!-- Song List -->
@@ -131,6 +139,30 @@
                     <button id="resetZoomBtn" class="zoom-btn" title="Reset Zoom (0)">↻</button>
                     <button id="zoomInBtn" class="zoom-btn" title="Zoom In (+)">+</button>
                     <div class="zoom-level-display" id="zoomLevelDisplay">100%</div>
+                </div>
+                
+                <!-- Mobile Bottom Navigation -->
+                <div class="bottom-nav" id="bottomNav">
+                    <button id="bottomPrevBtn" class="bottom-nav__btn" title="Previous Song">
+                        <span class="bottom-nav__icon">‹</span>
+                        <span class="bottom-nav__label">Previous</span>
+                    </button>
+                    <button id="bottomFavBtn" class="bottom-nav__btn" title="Toggle Favorite">
+                        <span class="bottom-nav__icon">♡</span>
+                        <span class="bottom-nav__label">Favorite</span>
+                    </button>
+                    <button id="bottomNextBtn" class="bottom-nav__btn" title="Next Song">
+                        <span class="bottom-nav__icon">›</span>
+                        <span class="bottom-nav__label">Next</span>
+                    </button>
+                    <button id="bottomRandomBtn" class="bottom-nav__btn" title="Random Song">
+                        <span class="bottom-nav__icon">🎲</span>
+                        <span class="bottom-nav__label">Random</span>
+                    </button>
+                    <button id="bottomFullscreenBtn" class="bottom-nav__btn" title="Toggle Fullscreen">
+                        <span class="bottom-nav__icon">⛶</span>
+                        <span class="bottom-nav__label">Fullscreen</span>
+                    </button>
                 </div>
                 
             </main>
