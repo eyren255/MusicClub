@@ -95,23 +95,35 @@
                 prev: document.getElementById("prevBtn"),
                 next: document.getElementById("nextBtn"),
                 search: document.getElementById("searchInput"),
-                listPanel: document.getElementById("songListPanel"),
-                toggleList: document.getElementById("toggleListBtn"),
+                listPanel: document.getElementById("songDrawer"),
+                toggleList: document.getElementById("songListBtn"),
                 landing: null,
                 enterBtn: null,
-                // Favorites/Recent & tools
-                tabAll: document.getElementById("tabAll"),
-                tabFav: document.getElementById("tabFav"),
-        tabRecent: document.getElementById("tabRecent"),
-                favToggle: document.getElementById("favToggle"),
-                fullscreenBtn: document.getElementById("fullscreenBtn"),
+                // New simplified navigation elements
+                currentSongTitle: document.getElementById("currentSongTitle"),
+                songCounter: document.getElementById("songCounter"),
+                searchBtn: document.getElementById("searchBtn"),
+                favoriteBtn: document.getElementById("favoriteBtn"),
+                zoomBtn: document.getElementById("zoomBtn"),
+                // Song drawer elements
+                songDrawer: document.getElementById("songDrawer"),
+                drawerBackdrop: document.getElementById("drawerBackdrop"),
+                closeDrawerBtn: document.getElementById("closeDrawerBtn"),
+                clearSearchBtn: document.getElementById("clearSearchBtn"),
+                // Tabs in drawer
+                tabAll: document.getElementById("allSongsTab"),
+                tabFav: document.getElementById("favoritesTab"),
+                // Zoom overlay elements
+                zoomOverlay: document.getElementById("zoomOverlay"),
+                zoomBackdrop: document.getElementById("zoomBackdrop"),
+                closeZoomBtn: document.getElementById("closeZoomBtn"),
                 zoomInBtn: document.getElementById("zoomInBtn"),
                 zoomOutBtn: document.getElementById("zoomOutBtn"),
                 zoomResetBtn: document.getElementById("resetZoomBtn"),
-        colMusicList: document.getElementById("colMusicList"),
-        colSaYar: document.getElementById("colSaYar"),
-        randomBtn: document.getElementById('randomBtn'),
-        shareBtn: document.getElementById('shareBtn')
+                // Loading elements
+                loadingOverlay: document.getElementById("loadingOverlay"),
+                zoomIndicator: document.getElementById("zoomIndicator"),
+                zoomLevel: document.getElementById("zoomLevel")
         };
 
     let currentIndex = 0; // 0-based
@@ -194,6 +206,7 @@
         }
 
         function updateMeta(){
+            updateCurrentSongDisplay();
                 const songs = getSongs();
                 elements.metaIndex.textContent = `${currentIndex + 1} / ${songs.length}`;
                 elements.metaTitle.textContent = songs[currentIndex] || "—";
@@ -459,6 +472,45 @@
             countSpan.textContent = `${resultsCount} of ${totalCount}`;
         }
 
+        // Helper functions for new navigation
+        function showSongDrawer() {
+            if (elements.songDrawer) {
+                elements.songDrawer.hidden = false;
+            }
+        }
+        
+        function hideSongDrawer() {
+            if (elements.songDrawer) {
+                elements.songDrawer.hidden = true;
+            }
+        }
+        
+        function showZoomOverlay() {
+            if (elements.zoomOverlay) {
+                elements.zoomOverlay.hidden = false;
+            }
+        }
+        
+        function hideZoomOverlay() {
+            if (elements.zoomOverlay) {
+                elements.zoomOverlay.hidden = true;
+            }
+        }
+        
+        // Updated display functions for new UI
+        function updateCurrentSongDisplay() {
+            const songs = getSongs();
+            if (currentIndex >= 0 && currentIndex < songs.length) {
+                const songTitle = songs[currentIndex];
+                if (elements.currentSongTitle) {
+                    elements.currentSongTitle.textContent = songTitle;
+                }
+                if (elements.songCounter) {
+                    elements.songCounter.textContent = `${currentIndex + 1} / ${songs.length}`;
+                }
+            }
+        }
+
         // Wire events
                 elements.prev.addEventListener("click", selectPrev);
                 elements.next.addEventListener("click", selectNext);
@@ -525,7 +577,7 @@
                         const view = params.get('view');
                         if(view === 'fav') setTab('fav');
                         if(view === 'recent') setTab('recent');
-                        if(params.get('openList') === '1'){ elements.listPanel.classList.add('is-open'); elements.toggleList.setAttribute('aria-expanded','true'); setTimeout(()=>elements.search.focus(),50); }
+                        if(params.get('openList') === '1'){ showSongDrawer(); setTimeout(()=>elements.search?.focus(),100); }
             const presetSearch = params.get('search');
             if(presetSearch){ elements.search.value = ''; setTimeout(()=>{ elements.search.value=''; elements.search.focus(); }, 50); }
             const songParam = params.get('song');
@@ -542,31 +594,46 @@
                 if(idx >= 0) selectIndex(idx);
             }
                 }catch(_){ }
-                // Toggle list for mobile
-                elements.toggleList.addEventListener("click", function(){
-                        const isOpen = elements.listPanel.classList.toggle("is-open");
-                        elements.toggleList.setAttribute("aria-expanded", String(isOpen));
-                        elements.toggleList.classList.toggle('is-on', isOpen);
-                        if(isOpen){
-                                // Focus search and scroll list into view on mobile
-                                setTimeout(() => {
-                                        elements.search.focus();
-                                        elements.listPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                                }, 50);
-                        } else {
-                                // If just closed, still bring user toward the list area
-                                elements.listPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }
+                // Song list drawer toggle
+                elements.toggleList?.addEventListener("click", function(){
+                        showSongDrawer();
                 });
-        // Tabs
-                elements.tabAll.addEventListener('click', () => setTab('all'));
-                elements.tabFav.addEventListener('click', () => setTab('fav'));
-                elements.tabRecent.addEventListener('click', () => setTab('recent'));
-                // Collection tabs
-                elements.colMusicList.addEventListener('click', () => setCollection('Music Club Song List'));
-                elements.colSaYar.addEventListener('click', () => setCollection('Sa Yar Ga Toe Pwell'));
-        // Favorites toggle
-                elements.favToggle.addEventListener('click', toggleFavorite);
+                
+                // Close drawer events
+                elements.closeDrawerBtn?.addEventListener('click', hideSongDrawer);
+                elements.drawerBackdrop?.addEventListener('click', hideSongDrawer);
+                
+                // Search button in header
+                elements.searchBtn?.addEventListener('click', function() {
+                    showSongDrawer();
+                    setTimeout(() => elements.search?.focus(), 100);
+                });
+                
+                // Favorite button in header
+                elements.favoriteBtn?.addEventListener('click', toggleFavorite);
+                
+                // Zoom button and controls
+                elements.zoomBtn?.addEventListener('click', showZoomOverlay);
+                elements.closeZoomBtn?.addEventListener('click', hideZoomOverlay);
+                elements.zoomBackdrop?.addEventListener('click', hideZoomOverlay);
+        // Tabs in drawer
+                elements.tabAll?.addEventListener('click', () => setTab('all'));
+                elements.tabFav?.addEventListener('click', () => setTab('fav'));
+                
+                // Clear search button
+                elements.clearSearchBtn?.addEventListener('click', function() {
+                    elements.search.value = '';
+                    elements.clearSearchBtn.hidden = true;
+                    applySearchFilter();
+                });
+                
+                // Show/hide clear button based on search input
+                elements.search?.addEventListener('input', function() {
+                    const hasText = elements.search.value.trim().length > 0;
+                    if (elements.clearSearchBtn) {
+                        elements.clearSearchBtn.hidden = !hasText;
+                    }
+                });
         // Random & Share
         elements.randomBtn?.addEventListener('click', () => {
             const songs = getSongs();
@@ -1063,7 +1130,14 @@ function createToast() {
     }
         function updateFavUi(){
         const isFav = getFavorites().includes(currentIndex);
+            if (elements.favoriteBtn) {
+                elements.favoriteBtn.textContent = isFav ? '❤' : '♡';
+                elements.favoriteBtn.classList.toggle('is-active', isFav);
+            }
+            // Legacy support for old element if it exists
+            if (elements.favToggle) {
                 elements.favToggle.textContent = isFav ? '❤' : '♡';
+            }
         }
         function pushRecent(idx){
         const recent = [idx, ...getRecent().filter(i => i !== idx)].slice(0, 10);
