@@ -98,8 +98,8 @@
                 prev: document.getElementById("prevBtn"),
                 next: document.getElementById("nextBtn"),
                 search: document.getElementById("searchInput"),
-                listPanel: document.getElementById("songDrawer"),
-                toggleList: document.getElementById("songListBtn"),
+                listPanel: document.getElementById("songListPanel"),
+                toggleList: document.getElementById("toggleListBtn"),
                 landing: null,
                 enterBtn: null,
                 // New simplified navigation elements
@@ -108,11 +108,11 @@
                 searchBtn: document.getElementById("searchBtn"),
                 favoriteBtn: document.getElementById("favoriteBtn"),
                 zoomBtn: document.getElementById("zoomBtn"),
-                // Song drawer elements
-                songDrawer: document.getElementById("songDrawer"),
+                // Song drawer elements (sidebar)
+                songDrawer: document.getElementById("songListPanel"),
                 drawerBackdrop: document.getElementById("drawerBackdrop"),
-                closeDrawerBtn: document.getElementById("closeDrawerBtn"),
-                clearSearchBtn: document.getElementById("clearSearchBtn"),
+                closeDrawerBtn: document.getElementById("closeSidebarBtn"),
+                clearSearchBtn: document.getElementById("clearSearch"),
                 // Tabs in drawer
                 tabAll: document.getElementById("allSongsTab"),
                 tabFav: document.getElementById("favoritesTab"),
@@ -346,9 +346,8 @@
         updateFavUi();
         pushRecent(index);
                 // On small screens, auto-close the list to reveal the image
-                if(window.innerWidth <= 900 && elements.listPanel.classList.contains("is-open")){
-                        elements.listPanel.classList.remove("is-open");
-                        elements.toggleList.setAttribute("aria-expanded", "false");
+                if(window.innerWidth <= 900 && elements.listPanel && elements.listPanel.classList.contains("is-open")){
+                        hideSongDrawer();
                 }
         }
 
@@ -502,13 +501,15 @@
         // Helper functions for new navigation
         function showSongDrawer() {
             if (elements.songDrawer) {
-                elements.songDrawer.hidden = false;
+                elements.songDrawer.classList.add('is-open');
+                if (elements.toggleList) elements.toggleList.setAttribute('aria-expanded', 'true');
             }
         }
         
         function hideSongDrawer() {
             if (elements.songDrawer) {
-                elements.songDrawer.hidden = true;
+                elements.songDrawer.classList.remove('is-open');
+                if (elements.toggleList) elements.toggleList.setAttribute('aria-expanded', 'false');
             }
         }
         
@@ -623,7 +624,8 @@
                 }catch(_){ }
                 // Song list drawer toggle
                 elements.toggleList?.addEventListener("click", function(){
-                        showSongDrawer();
+                        const isOpen = elements.songDrawer?.classList.contains('is-open');
+                        if(isOpen){ hideSongDrawer(); } else { showSongDrawer(); }
                 });
                 
                 // Close drawer events
