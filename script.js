@@ -676,8 +676,8 @@
         });
         
         // Mouse wheel zoom support
-        const imageViewer = document.querySelector('.viewer__image-wrap');
-        imageViewer.addEventListener('wheel', (e) => {
+        const imageViewer = document.querySelector('.image-container');
+        imageViewer?.addEventListener('wheel', (e) => {
             if (e.ctrlKey || e.metaKey) {
                 e.preventDefault();
                 if (e.deltaY < 0) {
