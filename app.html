@@ -16,227 +16,95 @@
 <body>
     <div class="app">
         <div id="appShell">
-        <header class="app__header">
-            <div class="brand">
-                <img class="brand__logo" src="MusicClubLogo.PNG" alt="Music Club Logo" />
-                <h1 class="app__title"> Song Selector</h1>
+        <!-- Simple Clean Header -->
+        <header class="simple-header">
+            <div class="header-left">
+                <a href="mainmenu.html" class="home-btn" title="Back to Home">← Home</a>
             </div>
-            <span class="credit-badge">Website made by <strong>Shin Myat Tun</strong></span>
+            <div class="header-center">
+                <div class="current-song-title" id="currentSongTitle">Select a song</div>
+                <div class="song-counter" id="songCounter">1 / 35</div>
+            </div>
+            <div class="header-right">
+                <button id="searchBtn" class="header-btn" title="Search Songs">🔍</button>
+                <button id="favoriteBtn" class="header-btn" title="Add to Favorites">♡</button>
+                <button id="zoomBtn" class="header-btn" title="Zoom Controls">🔍+</button>
+            </div>
         </header>
-        
-        <!-- Breadcrumb Navigation -->
-        <nav class="breadcrumb" aria-label="You are here">
-            <ol class="breadcrumb__list">
-                <li class="breadcrumb__item">
-                    <a href="mainmenu.html" class="breadcrumb__link">🏠 Home</a>
-                </li>
-                <li class="breadcrumb__separator" aria-hidden="true">›</li>
-                <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">
-                    <span class="breadcrumb__link">🎵 Songs</span>
-                </li>
-            </ol>
-        </nav>
 
-        <!-- Simplified Top Controls -->
-        <div class="app__top-controls">
-            <button id="toggleListBtn" class="btn btn--ghost list-toggle" aria-expanded="false" aria-controls="songListPanel" title="Show Songs (L)">
-                <span class="list-toggle__icon">☰</span>
-                <span class="list-toggle__text">Songs</span>
-            </button>
-            <div class="current-song-info">
-                <div class="current-song__collection" id="currentCollection">Sa Yar Ga Toe Pwell</div>
-                <div class="current-song__position" id="songPosition">1 / 35</div>
-            </div>
-        </div>
-
-        <!-- Floating Zoom Controls -->
-        <div class="zoom-controls" id="zoomControls">
-            <button id="zoomOutBtn" class="zoom-btn" title="Zoom Out (-)">−</button>
-            <button id="resetZoomBtn" class="zoom-btn" title="Reset Zoom (0)">↻</button>
-            <button id="zoomInBtn" class="zoom-btn" title="Zoom In (+)">+</button>
-        </div>
-
-        <main class="app__main">
-            <aside id="songListPanel" class="sidebar sidebar--hidden" aria-label="Song list">
-                <div class="sidebar__header">
-                    <h3 class="sidebar__title">Song Collection</h3>
-                    <button id="closeSidebarBtn" class="btn btn--ghost btn--small" aria-label="Close list" title="Close (Esc)">✕</button>
-                </div>
-                <div class="sidebar__search">
-                    <div class="search-input-wrapper">
-                        <input id="searchInput" type="search" placeholder="Search songs or number…" aria-label="Search songs or number">
-                        <button id="clearSearch" class="btn btn--ghost small" aria-label="Clear search">✕</button>
-                        <div id="searchResults" class="search-results-counter" hidden>
-                            <span id="searchCount">0 results</span>
-                        </div>
-                    </div>
-                    <div class="search-options">
-                        <button id="searchOptionsBtn" class="btn btn--ghost btn--small" title="Search Options">⚙️</button>
-                        <div id="searchOptionsPanel" class="search-options-panel" hidden>
-                            <label class="search-option">
-                                <input type="checkbox" id="fuzzySearch" checked>
-                                <span>Fuzzy matching</span>
-                            </label>
-                            <label class="search-option">
-                                <input type="checkbox" id="searchInFavorites">
-                                <span>Search in favorites only</span>
-                            </label>
-                            <label class="search-option">
-                                <input type="checkbox" id="caseSensitive">
-                                <span>Case sensitive</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="sidebar__tabs" role="tablist" aria-label="Collections">
-                    <button id="colMusicList" class="tab" role="tab" aria-selected="false">Music Club Song List</button>
-                    <button id="colSaYar" class="tab is-active" role="tab" aria-selected="true">Sa Yar Ga Toe Pwell</button>
-                </div>
-                <div class="sidebar__tabs" role="tablist">
-                    <button id="tabAll" class="tab is-active" role="tab" aria-selected="true">All</button>
-                    <button id="tabFav" class="tab" role="tab" aria-selected="false">Favorites</button>
-                    <button id="tabRecent" class="tab" role="tab" aria-selected="false">Recent</button>
-                </div>
-                <ol id="songList" class="song-list" start="1"></ol>
-            </aside>
-
-            <section class="viewer" aria-live="polite">
-                <div class="viewer__image-wrap">
-                    <div class="image-loading-overlay" id="imageLoadingOverlay" hidden>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Song Image Viewer -->
+            <div class="song-viewer">
+                <div class="image-container">
+                    <img id="songImage" alt="Song sheet music" />
+                    <div class="loading-overlay" id="loadingOverlay" hidden>
                         <div class="loading-spinner"></div>
                         <div class="loading-text">Loading...</div>
-                    </div>
-                    <img id="songImage" alt="Selected song cover" />
-                    <div id="imageFallback" class="viewer__fallback" hidden>
-                        <div class="fallback__emoji">🎵</div>
-                        <div class="fallback__text">No image available</div>
                     </div>
                     <div class="zoom-indicator" id="zoomIndicator" hidden>
                         <span id="zoomLevel">100%</span>
                     </div>
                 </div>
-                <div class="viewer__meta">
-                    <div class="meta__index" id="metaIndex">1 / 30</div>
-                    <div class="meta__title" id="metaTitle">—</div>
-                </div>
-            </section>
+            </div>
         </main>
 
-        <!-- Sidebar Overlay -->
-        <div id="sidebarOverlay" class="sidebar-overlay"></div>
-
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav" id="bottomNav">
-            <button id="prevBtn" class="bottom-nav__btn" aria-label="Previous song" title="Previous (←)">
-                <span class="bottom-nav__icon">◀</span>
-                <span class="bottom-nav__label">Previous</span>
+        <!-- Simple Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button id="prevBtn" class="nav-btn" title="Previous Song (←)">
+                <span class="nav-icon">◀</span>
+                <span class="nav-label">Previous</span>
             </button>
-            <button id="favToggle" class="bottom-nav__btn" title="Favorite (F)">
-                <span class="bottom-nav__icon">♡</span>
-                <span class="bottom-nav__label">Favorite</span>
+            <button id="songListBtn" class="nav-btn" title="Song List">
+                <span class="nav-icon">📋</span>
+                <span class="nav-label">Songs</span>
             </button>
-            <button id="nextBtn" class="bottom-nav__btn" aria-label="Next song" title="Next (→)">
-                <span class="bottom-nav__icon">▶</span>
-                <span class="bottom-nav__label">Next</span>
-            </button>
-            <button id="randomBtn" class="bottom-nav__btn" title="Random song (R)">
-                <span class="bottom-nav__icon">🎲</span>
-                <span class="bottom-nav__label">Random</span>
-            </button>
-            <button id="moreMenuBtn" class="bottom-nav__btn" title="More options">
-                <span class="bottom-nav__icon">⋯</span>
-                <span class="bottom-nav__label">More</span>
+            <button id="nextBtn" class="nav-btn" title="Next Song (→)">
+                <span class="nav-icon">▶</span>
+                <span class="nav-label">Next</span>
             </button>
         </nav>
 
-        <!-- More Menu -->
-        <div id="moreMenu" class="more-menu" hidden>
-            <div class="more-menu__panel">
-                <a href="mainmenu.html" class="more-menu__item">
-                    <span class="more-menu__icon">🏠</span>
-                    <span class="more-menu__text">Home</span>
-                </a>
-                <button id="shareBtn" class="more-menu__item" title="Share link (S)">
-                    <span class="more-menu__icon">📤</span>
-                    <span class="more-menu__text">Share</span>
-                </button>
-                <button id="helpBtn" class="more-menu__item" title="Shortcuts (?)">
-                    <span class="more-menu__icon">❓</span>
-                    <span class="more-menu__text">Help</span>
-                </button>
-                <button id="quickNavBtn" class="more-menu__item" title="Quick Navigation">
-                    <span class="more-menu__icon">⚡</span>
-                    <span class="more-menu__text">Quick Nav</span>
-                </button>
+        <!-- Song List Drawer -->
+        <div id="songDrawer" class="song-drawer" hidden>
+            <div class="drawer-backdrop" id="drawerBackdrop"></div>
+            <div class="drawer-content">
+                <div class="drawer-header">
+                    <h3>Song List</h3>
+                    <button id="closeDrawerBtn" class="close-btn">✕</button>
+                </div>
+                <div class="drawer-search">
+                    <input id="searchInput" type="search" placeholder="Search songs..." />
+                    <button id="clearSearchBtn" class="clear-btn" hidden>✕</button>
+                </div>
+                <div class="song-tabs">
+                    <button id="allSongsTab" class="tab-btn active">All Songs</button>
+                    <button id="favoritesTab" class="tab-btn">Favorites</button>
+                </div>
+                <div id="songListContainer" class="song-list-container">
+                    <ol id="songList" class="simple-song-list"></ol>
+                </div>
             </div>
         </div>
 
-        <!-- Toast notifications -->
+        <!-- Zoom Controls Overlay -->
+        <div id="zoomOverlay" class="zoom-overlay" hidden>
+            <div class="zoom-backdrop" id="zoomBackdrop"></div>
+            <div class="zoom-panel">
+                <div class="zoom-header">
+                    <h3>Zoom Controls</h3>
+                    <button id="closeZoomBtn" class="close-btn">✕</button>
+                </div>
+                <div class="zoom-buttons">
+                    <button id="zoomOutBtn" class="zoom-control-btn">Zoom Out −</button>
+                    <button id="resetZoomBtn" class="zoom-control-btn">Reset ↻</button>
+                    <button id="zoomInBtn" class="zoom-control-btn">Zoom In +</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
         <div id="toast" class="toast" hidden></div>
-
-        <!-- Help overlay -->
-        <div id="helpOverlay" class="help" hidden role="dialog" aria-modal="true" aria-labelledby="helpTitle">
-            <div class="help__panel">
-                <div class="help__header">
-                    <h3 id="helpTitle">Shortcuts</h3>
-                    <button id="helpClose" class="btn btn--ghost small" aria-label="Close">✕</button>
-                </div>
-                <div class="help__content">
-                    <ul>
-                        <li>↑ / ↓ — Move selection</li>
-                        <li>← / → — Previous / Next</li>
-                        <li>R — Random song</li>
-                        <li>S — Share link</li>
-                        <li>Ctrl/Cmd + K — Focus search</li>
-                        <li>Enter — Open selected</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        
-
-        <footer class="app__footer">
-            <div>Tip: Use ↑/↓ to move selection, ←/→ to change image. Press ? for all shortcuts.</div>
-           
-        </footer>
-        
-        <!-- Back to Top Button -->
-        <button id="backToTop" class="back-to-top" title="Back to top (Alt+T)" aria-label="Back to top" hidden>
-            <span class="back-to-top__icon">↑</span>
-        </button>
-        
-        <!-- Quick Navigation Menu -->
-        <div id="quickNavMenu" class="quick-nav" hidden role="dialog" aria-labelledby="quickNavTitle">
-            <div class="quick-nav__panel">
-                <div class="quick-nav__header">
-                    <h3 id="quickNavTitle">Quick Navigation</h3>
-                    <button id="quickNavClose" class="btn btn--ghost small" aria-label="Close">✕</button>
-                </div>
-                <div class="quick-nav__content">
-                    <a href="mainmenu.html" class="quick-nav__item">
-                        <span class="quick-nav__icon">🏠</span>
-                        <span class="quick-nav__text">Home</span>
-                        <span class="quick-nav__shortcut">Alt+H</span>
-                    </a>
-                    <a href="learn.html" class="quick-nav__item">
-                        <span class="quick-nav__icon">📚</span>
-                        <span class="quick-nav__text">Learn</span>
-                        <span class="quick-nav__shortcut">Ctrl+2</span>
-                    </a>
-                    <button class="quick-nav__item" onclick="document.getElementById('searchInput').focus()">
-                        <span class="quick-nav__icon">🔍</span>
-                        <span class="quick-nav__text">Focus Search</span>
-                        <span class="quick-nav__shortcut">Ctrl+K</span>
-                    </button>
-                    <button class="quick-nav__item" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-                        <span class="quick-nav__icon">↑</span>
-                        <span class="quick-nav__text">Back to Top</span>
-                        <span class="quick-nav__shortcut">Alt+T</span>
-                    </button>
-                </div>
-            </div>
-        </div>
         
         </div>
     </div>
