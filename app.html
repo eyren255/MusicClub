@@ -44,8 +44,13 @@
                 
                 <!-- Search -->
                 <div class="sidebar__search">
-                    <input id="searchInput" type="search" placeholder="Search songs..." aria-label="Search songs">
-                    <button id="clearSearch" class="btn btn--ghost small" aria-label="Clear search">✕</button>
+                    <div class="search-input-wrapper">
+                        <input id="searchInput" type="search" placeholder="Search songs..." aria-label="Search songs">
+                        <button id="clearSearch" class="btn btn--ghost small" aria-label="Clear search" hidden>✕</button>
+                    </div>
+                    <div class="search-results-count" id="searchResultsCount" hidden>
+                        <span id="resultCount">0 results</span>
+                    </div>
                 </div>
                 
                 <!-- Tabs -->
@@ -101,6 +106,9 @@
                         <button id="fitToScreenBtn" class="image-control-btn" title="Fit to Screen (Ctrl+0)">
                             ⊞
                         </button>
+                        <button id="rotateBtn" class="image-control-btn" title="Rotate Image (R)">
+                            ↻
+                        </button>
                     </div>
                 </div>
                 
@@ -108,6 +116,7 @@
                 <div class="viewer__meta">
                     <div class="meta__index" id="metaIndex">1 / 35</div>
                     <div class="meta__title" id="metaTitle">Select a song</div>
+                    <div class="meta__collection" id="metaCollection">Sa Yar Ga Toe Pwell</div>
                 </div>
                 
                 <!-- Controls -->
