@@ -221,7 +221,7 @@
         }
     }
     
-    // Enhanced Sidebar functionality
+    // Enhanced Sidebar functionality for modern layout
     function initSidebar() {
         const toggleListBtn = document.getElementById('toggleListBtn');
         const closeSidebarBtn = document.getElementById('closeSidebarBtn');
@@ -373,51 +373,56 @@
         const bottomRandomBtn = document.getElementById('bottomRandomBtn');
         const bottomFullscreenBtn = document.getElementById('bottomFullscreenBtn');
         
-        // Connect bottom nav to existing functions
-        if(bottomPrevBtn) {
-            bottomPrevBtn.addEventListener('click', () => {
+        // Connect mobile nav to existing functions
+        const mobilePrevBtn = document.getElementById('mobilePrevBtn');
+        const mobileNextBtn = document.getElementById('mobileNextBtn');
+        const mobileFavBtn = document.getElementById('mobileFavBtn');
+        const mobileRandomBtn = document.getElementById('mobileRandomBtn');
+        
+        if(mobilePrevBtn) {
+            mobilePrevBtn.addEventListener('click', () => {
                 const prevBtn = document.getElementById('prevBtn');
                 if(prevBtn) prevBtn.click();
             });
         }
         
-        if(bottomNextBtn) {
-            bottomNextBtn.addEventListener('click', () => {
+        if(mobileNextBtn) {
+            mobileNextBtn.addEventListener('click', () => {
                 const nextBtn = document.getElementById('nextBtn');
                 if(nextBtn) nextBtn.click();
             });
         }
         
-        if(bottomFavBtn) {
-            bottomFavBtn.addEventListener('click', () => {
+        if(mobileFavBtn) {
+            mobileFavBtn.addEventListener('click', () => {
                 const favBtn = document.getElementById('favToggle');
                 if(favBtn) favBtn.click();
             });
         }
         
-        if(bottomRandomBtn) {
-            bottomRandomBtn.addEventListener('click', () => {
+        if(mobileRandomBtn) {
+            mobileRandomBtn.addEventListener('click', () => {
                 const randomBtn = document.getElementById('randomBtn');
                 if(randomBtn) randomBtn.click();
             });
         }
         
-        if(bottomFullscreenBtn) {
-            bottomFullscreenBtn.addEventListener('click', () => {
-                const fullscreenBtn = document.getElementById('fullscreenBtn');
-                if(fullscreenBtn) fullscreenBtn.click();
-            });
-        }
-        
-        // Update favorite button visual state in bottom nav
-        function updateBottomNavFavorite() {
-            const bottomFavIcon = bottomFavBtn && bottomFavBtn.querySelector('.bottom-nav__icon');
-            if(bottomFavIcon) {
+        // Update favorite button visual state in mobile nav
+        function updateMobileNavFavorite() {
+            if(mobileFavBtn) {
                 const favorites = typeof window.getFavorites === 'function' ? window.getFavorites() : [];
                 const isFav = typeof window.currentIndex !== 'undefined' && favorites.includes(window.currentIndex);
                 
-                bottomFavBtn.classList.toggle('is-favorite', isFav);
-                bottomFavIcon.textContent = isFav ? '♥' : '♡';
+                mobileFavBtn.classList.toggle('is-favorite', isFav);
+            }
+            
+            // Also update desktop favorite button
+            const desktopFavBtn = document.getElementById('favToggle');
+            if(desktopFavBtn) {
+                const favorites = typeof window.getFavorites === 'function' ? window.getFavorites() : [];
+                const isFav = typeof window.currentIndex !== 'undefined' && favorites.includes(window.currentIndex);
+                
+                desktopFavBtn.classList.toggle('is-favorite', isFav);
             }
         }
         
@@ -449,10 +454,11 @@
         });
         
         // Export function for use by script.js
-        window.updateBottomNavFavorite = updateBottomNavFavorite;
+        window.updateMobileNavFavorite = updateMobileNavFavorite;
+        window.updateBottomNavFavorite = updateMobileNavFavorite; // Backward compatibility
         
         // Initial update
-        setTimeout(updateBottomNavFavorite, 500);
+        setTimeout(updateMobileNavFavorite, 500);
     }
     
     // Enhanced touch gestures for mobile
