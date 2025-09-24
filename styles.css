@@ -1804,6 +1804,116 @@ body{
     -webkit-overflow-scrolling: touch;
 }
 
+/* ===== ANDROID MATERIAL DESIGN OPTIMIZATIONS ===== */
+
+/* Material Design elevation shadows */
+.material-elevation-1 {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+.material-elevation-2 {
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+.material-elevation-3 {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+
+/* Material Design ripple effect for Android */
+.material-ripple {
+    position: relative;
+    overflow: hidden;
+    transform: translate3d(0, 0, 0);
+}
+
+.material-ripple:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(0);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.material-ripple:active:before {
+    animation: material-ripple-effect 0.5s ease-out;
+}
+
+@keyframes material-ripple-effect {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Android-style floating action button */
+.fab {
+    position: fixed;
+    bottom: calc(var(--bottom-nav-height) + 16px);
+    right: var(--mobile-padding);
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 50;
+    transform: scale(0);
+    opacity: 0;
+}
+
+.fab.show {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.fab:hover {
+    background: var(--primary-600);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+}
+
+.fab:active {
+    transform: scale(0.95);
+}
+
+/* Android system navigation awareness */
+@media screen and (max-width: 900px) {
+    /* Adjust for Android gesture navigation */
+    .bottom-nav {
+        padding-bottom: calc(max(var(--safe-area-inset-bottom), 8px) + 8px);
+    }
+    
+    /* Android-style card design */
+    .card {
+        border-radius: 8px;
+        border: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1), 0 8px 16px rgba(0,0,0,0.1);
+    }
+    
+    /* Material Design button style for Android */
+    .btn--material {
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: 500;
+        letter-spacing: 0.75px;
+        padding: 8px 16px;
+        min-width: 64px;
+        height: 36px;
+    }
+}
+
 /* ===== NEW SIMPLIFIED NAVIGATION STYLES ===== */
 
 /* Simple Clean Header */
