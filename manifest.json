@@ -1,0 +1,23 @@
+{
+  "name": "Music Club - Song Browser",
+  "short_name": "Music Club",
+  "description": "Discover, Save, and Play Together - Browse song collection with ease",
+  "start_url": "/app.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#142017",
+  "background_color": "#0a0f0b",
+  "icons": [
+    {
+      "src": "MusicClubLogo.PNG",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["music", "entertainment"],
+  "lang": "en",
+  "dir": "ltr",
+  "screenshots": [],
+  "prefer_related_applications": false
+}
