@@ -427,7 +427,7 @@
         }
         
         // Update bottom nav favorite when the page loads
-        setTimeout(updateBottomNavFavorite, 200);
+        setTimeout(updateMobileNavFavorite, 200);
         
         // Hook into existing updateFavUi function if available
         setTimeout(() => {
@@ -435,7 +435,7 @@
                 const originalUpdateFavUi = window.updateFavUi;
                 window.updateFavUi = function() {
                     originalUpdateFavUi();
-                    updateBottomNavFavorite();
+                    updateMobileNavFavorite();
                 };
             }
         }, 300);
