@@ -1224,6 +1224,171 @@ function handleFullscreenChange() {
         // Show controls initially
         showImageControls();
 
+        // NEW NAVIGATION SYSTEM EVENT LISTENERS
+        
+        // More Menu functionality
+        const moreMenuBtn = document.getElementById('moreMenuBtn');
+        const moreMenu = document.getElementById('moreMenu');
+        if(moreMenuBtn && moreMenu){
+            moreMenuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                moreMenu.hidden = !moreMenu.hidden;
+            });
+            
+            // Close more menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if(!moreMenu.contains(e.target) && !moreMenuBtn.contains(e.target)){
+                    moreMenu.hidden = true;
+                }
+            });
+            
+            // Close more menu when pressing escape
+            document.addEventListener('keydown', (e) => {
+                if(e.key === 'Escape' && !moreMenu.hidden){
+                    moreMenu.hidden = true;
+                }
+            });
+        }
+        
+        // Update current song info in top controls
+        function updateCurrentSongInfo(){
+            const currentCollectionEl = document.getElementById('currentCollection');
+            const songPositionEl = document.getElementById('songPosition');
+            
+            if(currentCollectionEl){
+                currentCollectionEl.textContent = currentCollection;
+            }
+            
+            if(songPositionEl){
+                const songs = getSongs();
+                songPositionEl.textContent = `${currentIndex + 1} / ${songs.length}`;
+            }
+        }
+        
+        // Override updateMeta to also update current song info
+        const originalUpdateMeta = updateMeta;
+        updateMeta = function(){
+            originalUpdateMeta();
+            updateCurrentSongInfo();
+        };
+        
+        // Floating zoom controls visibility
+        const zoomControls = document.getElementById('zoomControls');
+        let zoomControlsTimeout;
+        
+        function showZoomControls(){
+            if(zoomControls){
+                zoomControls.classList.add('visible');
+                clearTimeout(zoomControlsTimeout);
+                
+                // Auto-hide after 3 seconds
+                zoomControlsTimeout = setTimeout(() => {
+                    hideZoomControls();
+                }, 3000);
+            }
+        }
+        
+        function hideZoomControls(){
+            if(zoomControls){
+                zoomControls.classList.remove('visible');
+            }
+        }
+        
+        // Show zoom controls when image is interacted with
+        const imageWrapEl = document.querySelector('.viewer__image-wrap');
+        if(imageWrapEl){
+            imageWrapEl.addEventListener('mouseenter', showZoomControls);
+            imageWrapEl.addEventListener('touchstart', showZoomControls);
+        }
+        
+        // Show zoom controls when zooming with wheel
+        if(imageViewer){
+            imageViewer.addEventListener('wheel', (e) => {
+                if(e.ctrlKey || e.metaKey){
+                    showZoomControls();
+                }
+            });
+        }
+        
+        // Update favorite button visual state in bottom nav
+        function updateBottomNavFavorite(){
+            const favBtn = document.getElementById('favToggle');
+            if(favBtn){
+                const favorites = getFavorites();
+                const isFav = favorites.includes(currentIndex);
+                
+                favBtn.classList.toggle('is-favorite', isFav);
+                favBtn.querySelector('.bottom-nav__icon').textContent = isFav ? '❤' : '♡';
+            }
+        }
+        
+        // Override updateFavUi to also update bottom nav
+        const originalUpdateFavUi = updateFavUi;
+        updateFavUi = function(){
+            originalUpdateFavUi();
+            updateBottomNavFavorite();
+        };
+        
+        // Add haptic feedback for mobile interactions (if supported)
+        function addHapticFeedback(){
+            if('vibrate' in navigator){
+                navigator.vibrate(50);
+            }
+        }
+        
+        // Add haptic feedback to bottom nav buttons
+        const bottomNavBtns = document.querySelectorAll('.bottom-nav__btn');
+        bottomNavBtns.forEach(btn => {
+            btn.addEventListener('click', addHapticFeedback);
+        });
+        
+        // Enhanced touch gestures for song navigation
+        let touchStartXNav = null;
+        let touchStartYNav = null;
+        let touchStartTimeNav = null;
+        
+        function handleNavTouchStart(e){
+            if(e.touches.length === 1){
+                touchStartXNav = e.touches[0].clientX;
+                touchStartYNav = e.touches[0].clientY;
+                touchStartTimeNav = Date.now();
+            }
+        }
+        
+        function handleNavTouchEnd(e){
+            if(!touchStartXNav || !touchStartYNav || !touchStartTimeNav) return;
+            
+            const touchEndTime = Date.now();
+            const touchDuration = touchEndTime - touchStartTimeNav;
+            
+            if(touchDuration > 50 && touchDuration < 500 && e.changedTouches && e.changedTouches[0]){
+                const endTouch = e.changedTouches[0];
+                const deltaX = endTouch.clientX - touchStartXNav;
+                const deltaY = Math.abs(endTouch.clientY - touchStartYNav);
+                
+                // Horizontal swipe with minimal vertical movement
+                if(Math.abs(deltaX) > 50 && deltaY < 100){
+                    if(deltaX > 0){
+                        selectPrev(); // Swipe right = previous
+                    } else {
+                        selectNext(); // Swipe left = next
+                    }
+                    addHapticFeedback();
+                }
+            }
+            
+            touchStartXNav = touchStartYNav = touchStartTimeNav = null;
+        }
+        
+        // Add swipe navigation to main image area
+        if(imageWrapEl){
+            imageWrapEl.addEventListener('touchstart', handleNavTouchStart, {passive: true});
+            imageWrapEl.addEventListener('touchend', handleNavTouchEnd, {passive: true});
+        }
+        
+        // Initialize current song info on load
+        updateCurrentSongInfo();
+
         // Initial render
                 renderList();
                 selectIndex(0);
