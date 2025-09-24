@@ -113,9 +113,13 @@
                 drawerBackdrop: document.getElementById("drawerBackdrop"),
                 closeDrawerBtn: document.getElementById("closeSidebarBtn"),
                 clearSearchBtn: document.getElementById("clearSearch"),
-                // Tabs in drawer
-                tabAll: document.getElementById("allSongsTab"),
-                tabFav: document.getElementById("favoritesTab"),
+                // Tabs in sidebar
+                tabAll: document.getElementById("tabAll"),
+                tabFav: document.getElementById("tabFav"),
+                tabRecent: document.getElementById("tabRecent"),
+                // Collection tabs
+                colSaYar: document.getElementById("colSaYar"),
+                colMusicList: document.getElementById("colMusicList"),
                 // Zoom overlay elements
                 zoomOverlay: document.getElementById("zoomOverlay"),
                 zoomBackdrop: document.getElementById("zoomBackdrop"),
@@ -640,9 +644,13 @@
                 elements.zoomBtn?.addEventListener('click', showZoomOverlay);
                 elements.closeZoomBtn?.addEventListener('click', hideZoomOverlay);
                 elements.zoomBackdrop?.addEventListener('click', hideZoomOverlay);
-        // Tabs in drawer
+        // Tabs in sidebar
                 elements.tabAll?.addEventListener('click', () => setTab('all'));
                 elements.tabFav?.addEventListener('click', () => setTab('fav'));
+                elements.tabRecent?.addEventListener('click', () => setTab('recent'));
+        // Collection tabs
+                elements.colSaYar?.addEventListener('click', () => setCollection('Sa Yar Ga Toe Pwell'));
+                elements.colMusicList?.addEventListener('click', () => setCollection('Music Club Song List'));
                 
                 // Clear search button
                 elements.clearSearchBtn?.addEventListener('click', function() {
